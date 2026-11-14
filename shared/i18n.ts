@@ -41,6 +41,7 @@ const en = {
   streak: "Streak",
   best: "Best",
   days: "days",
+  day: "day",
   guestNote: "Playing as a guest. Sign in to keep streaks across devices, join clans and play yesterday's games.",
 };
 
@@ -85,6 +86,7 @@ const fr: Dict = {
   streak: "Série",
   best: "Record",
   days: "jours",
+  day: "jour",
   guestNote: "Tu joues en invité. Connecte-toi pour garder tes séries sur tous tes appareils, rejoindre des clans et jouer aux jeux d'hier.",
 };
 
