@@ -1,4 +1,6 @@
+/* Black squares stay dark in both themes. */
 .wrap {
+  --block: #1d1b22;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -30,8 +32,8 @@
   grid-template-columns: repeat(5, 1fr);
   width: min(100%, 340px);
   aspect-ratio: 1;
-  border: 2px solid var(--ink);
-  background: var(--ink);
+  border: 2px solid var(--block);
+  background: var(--block);
   gap: 2px;
 }
 
@@ -42,7 +44,12 @@
 }
 
 .black {
-  background: var(--ink);
+  background: var(--block);
+}
+
+@media (prefers-color-scheme: dark) {
+  .wrap { --block: #050507; }
+  .cell { background: #2e2c36; }
 }
 
 .cell {
