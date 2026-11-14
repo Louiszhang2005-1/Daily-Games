@@ -34,7 +34,7 @@ export function StreakBadge({ server }: { server?: { current: number; best: numb
   return (
     <div className="row gap small">
       <span>
-        🔥 {t.streak}: <strong>{s.current}</strong> {t.days}
+        🔥 {t.streak}: <strong>{s.current}</strong> {s.current === 1 ? t.day : t.days}
       </span>
       <span className="muted">
         {t.best}: {s.best}
