@@ -9,8 +9,8 @@ Bilingual (English / French). Full spec: [docs/PRD.md](docs/PRD.md).
 | Word | `/play/word` | Wordle |
 | Country Guess | `/play/country` | Worldle / Globle, with clues you choose |
 | Mini Crossword (Easy / Medium) | `/play/crossword` | NYT Mini |
-| Rare Answers | `/play/rare` | Krillion |
-| Common Answers | `/play/common` | Noillirk |
+| Deep Dive | `/play/rare` | Krillion |
+| Up & Away | `/play/common` | Noillirk |
 
 ## Run locally
 
