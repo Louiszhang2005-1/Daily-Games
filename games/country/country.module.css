@@ -1,0 +1,97 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.clues {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.clue {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--cat, var(--accent));
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 1.02rem;
+  line-height: 1.4;
+}
+
+.clue[data-cat="history"],
+.revealBtn[data-cat="history"] { --cat: #b5651d; }
+.clue[data-cat="geography"],
+.revealBtn[data-cat="geography"] { --cat: #2b6fd6; }
+.clue[data-cat="climate"],
+.revealBtn[data-cat="climate"] { --cat: #2f9e6e; }
+.clue[data-cat="landmarks"],
+.revealBtn[data-cat="landmarks"] { --cat: #8a4fd6; }
+
+.new { animation: rise 0.35s ease; }
+
+.cat {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--cat, var(--muted));
+  margin-bottom: 2px;
+}
+
+.revealRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+}
+
+.revealBtn {
+  flex-direction: column;
+  border-radius: 12px;
+  border-color: var(--cat);
+  gap: 2px;
+  padding: 8px;
+}
+
+.warn {
+  margin: 0;
+  font-weight: 700;
+  color: var(--bad);
+}
+
+.guesses {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.guesses li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  animation: rise 0.25s ease;
+}
+
+.guesses li.hit {
+  background: var(--good);
+  color: #fff;
+  font-weight: 700;
+}
+
+.end {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.3rem;
+  margin: 0;
+}
