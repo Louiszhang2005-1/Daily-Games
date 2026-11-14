@@ -117,3 +117,21 @@
   max-width: 76px;
   font-size: 0.82rem;
 }
+
+/* Today's guess distribution on the results screen */
+.dist { display: flex; flex-direction: column; gap: 5px; }
+.distRow { display: grid; grid-template-columns: 18px 1fr; align-items: center; gap: 8px; }
+.distKey { font-weight: 700; text-align: center; }
+
+.distBar {
+  min-width: 26px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--miss);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-align: right;
+}
+
+.distMine { background: var(--good); }

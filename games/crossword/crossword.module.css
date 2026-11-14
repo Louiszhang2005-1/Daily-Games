@@ -3,6 +3,7 @@
   --block: #1b2140;
   --cell: #ffffff;
   --cell-ink: #1b2140;
+  --word-hl: #b9dcff; /* current word: pale blue; selected cell: mustard */
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -10,7 +11,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  .wrap { --block: #05070f; --cell: #262e4a; --cell-ink: #eef1fa; }
+  .wrap { --block: #05070f; --cell: #262e4a; --cell-ink: #eef1fa; --word-hl: #2f4f86; }
 }
 
 .timer {
@@ -85,7 +86,7 @@
 .grid > :nth-child(21) { border-bottom-left-radius: 10px; }
 .grid > :last-child { border-bottom-right-radius: 10px; }
 
-.inWord { background: color-mix(in srgb, var(--gc) 32%, var(--cell)); }
+.inWord { background: var(--word-hl); }
 .selected { background: var(--gc); color: #1b2140; }
 .locked { color: var(--g-country); }
 .selected.locked { color: #1b2140; text-decoration: underline; }
@@ -138,7 +139,7 @@
 }
 
 .list li:hover { background: var(--surface-2); }
-.activeClue { background: color-mix(in srgb, var(--gc) 26%, transparent); }
+.activeClue { background: var(--word-hl); }
 
 .keyboard {
   display: flex;

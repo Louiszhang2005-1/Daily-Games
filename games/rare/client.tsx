@@ -1,31 +1,84 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { variantKey, type FinishResult, type GameClientProps, type Lang } from "@/shared/game";
-import { PromptRound } from "@/shared/prompts/PromptRound";
+import { PromptRound, type RoundCopy } from "@/shared/prompts/PromptRound";
+import { diveScene } from "@/shared/prompts/scenes";
 import type { RareTier } from "@/shared/prompts/types";
+import { sceneStyles as v } from "@/shared/prompts/Expedition";
 import { answerRare, reportRare, type RareReveal } from "./actions";
 import type { PromptResult, RarePublic } from "./server";
 import s from "./rare.module.css";
 
+const TIERS: RareTier[] = ["common", "known", "rare", "deep", "legend"];
+const POINTS = [10, 30, 60, 85, 100];
+
 const S = {
   en: {
     tiers: { common: "Common", known: "Known", rare: "Rare", deep: "Deep cut", legend: "One in a million" },
-    reasons: { empty: "No answer", nonsense: "That doesn't look like an answer", unlisted: "Not on our list for this prompt" },
-    report: "Report: this should count",
-    reported: "Thanks, we'll review it tonight.",
+    quips: {
+      common: "Plenty of people were already down here.",
+      known: "A few others thought of that one.",
+      rare: "Now you're getting somewhere.",
+      deep: "Hardly anyone makes it this far down.",
+      legend: "Nobody else is down here with you.",
+    },
+    nothing: "Nothing counted",
+    nothingLine: "No answer landed before the clock ran out.",
+    reject: { empty: "", nonsense: "That doesn't look like an answer. Try another.", unlisted: "Not a valid answer for this one. Try another." },
+    report: (a: string) => `Report "${a}": it should count`,
+    reported: "Thanks. It goes into tonight's review.",
     most: "Most people said",
     you: "You",
     pts: "pts",
+    copy: {
+      start: "Start the dive",
+      submit: "Dive",
+      next: "Keep diving",
+      finish: "Surface and see results",
+      pass: "Pass",
+      placeholder: "Type one answer…",
+      hint: "Rarer answers sink deeper",
+      meterLabel: "Depth",
+      scoreLabel: "Score",
+      promptOf: (i: number, n: number) => `Prompt ${i} of ${n}`,
+      clockIn: "The clock starts in",
+      timeUp: "Time's up",
+      intro: "7 prompts, 25 seconds each. Give a real answer that few people would think of. The rarer it is, the deeper you sink. Wrong answers bounce off, so keep trying until the clock runs out.",
+    } satisfies RoundCopy,
   },
   fr: {
     tiers: { common: "Courant", known: "Connu", rare: "Rare", deep: "Pointu", legend: "Une sur un million" },
-    reasons: { empty: "Pas de réponse", nonsense: "Ça ne ressemble pas à une réponse", unlisted: "Pas dans notre liste pour cette question" },
-    report: "Signaler : ça devrait compter",
-    reported: "Merci, on vérifie ce soir.",
+    quips: {
+      common: "Beaucoup de monde était déjà là.",
+      known: "Quelques autres y ont pensé aussi.",
+      rare: "Là, ça devient intéressant.",
+      deep: "Presque personne ne descend aussi bas.",
+      legend: "Personne d'autre n'est ici avec toi.",
+    },
+    nothing: "Rien n'a compté",
+    nothingLine: "Aucune réponse avant la fin du chrono.",
+    reject: { empty: "", nonsense: "Ça ne ressemble pas à une réponse. Essaie autre chose.", unlisted: "Réponse non valide pour celle-ci. Essaie autre chose." },
+    report: (a: string) => `Signaler « ${a} » : ça devrait compter`,
+    reported: "Merci. Ce sera vérifié ce soir.",
     most: "La plupart ont dit",
     you: "Toi",
     pts: "pts",
+    copy: {
+      start: "Commencer la plongée",
+      submit: "Plonger",
+      next: "Continuer",
+      finish: "Remonter et voir les résultats",
+      pass: "Passer",
+      placeholder: "Une seule réponse…",
+      hint: "Plus c'est rare, plus tu descends",
+      meterLabel: "Profondeur",
+      scoreLabel: "Score",
+      promptOf: (i: number, n: number) => `Question ${i} sur ${n}`,
+      clockIn: "Le chrono démarre dans",
+      timeUp: "Temps écoulé",
+      intro: "7 questions, 25 secondes chacune. Donne une vraie réponse à laquelle peu de gens penseraient. Plus elle est rare, plus tu descends. Les mauvaises réponses rebondissent : continue jusqu'à la fin du chrono.",
+    } satisfies RoundCopy,
   },
 } satisfies Record<Lang, unknown>;
 
@@ -33,122 +86,78 @@ function beep(points: number) {
   try {
     const Ctx = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     const ctx = new Ctx();
-    const notes = points >= 85 ? [523, 659, 784, 1047] : points >= 60 ? [523, 659, 784] : points > 0 ? [440, 554] : [220];
+    const notes = points >= 85 ? [784, 659, 523, 392] : points >= 60 ? [659, 523, 392] : points > 0 ? [523, 440] : [196];
     notes.forEach((f, i) => {
       const o = ctx.createOscillator();
       const g = ctx.createGain();
       o.frequency.value = f;
-      o.type = "triangle";
-      g.gain.setValueAtTime(0.0001, ctx.currentTime + i * 0.09);
-      g.gain.exponentialRampToValueAtTime(0.15, ctx.currentTime + i * 0.09 + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + i * 0.09 + 0.25);
+      o.type = "sine";
+      g.gain.setValueAtTime(0.0001, ctx.currentTime + i * 0.1);
+      g.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + i * 0.1 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + i * 0.1 + 0.3);
       o.connect(g).connect(ctx.destination);
-      o.start(ctx.currentTime + i * 0.09);
-      o.stop(ctx.currentTime + i * 0.09 + 0.3);
+      o.start(ctx.currentTime + i * 0.1);
+      o.stop(ctx.currentTime + i * 0.1 + 0.35);
     });
   } catch {
     /* audio blocked */
   }
 }
 
-function RollingNumber({ value }: { value: number }) {
-  const [shown, setShown] = useState(0);
-  useEffect(() => {
-    let raf = 0;
-    const start = performance.now();
-    const tick = (now: number) => {
-      const k = Math.min(1, (now - start) / 900);
-      setShown(Math.round(value * (1 - Math.pow(1 - k, 3))));
-      if (k < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [value]);
-  return <span className="mono">{shown}</span>;
-}
-
-function Reveal({ r, lang, onReport }: { r: RareReveal; lang: Lang; onReport: () => Promise<void> }) {
+function Verdict({ r, lang, rejected, onReport }: { r: RareReveal; lang: Lang; rejected: string | null; onReport: (text: string) => Promise<void> }) {
   const t = S[lang];
   const [reported, setReported] = useState(false);
-  useEffect(() => beep(r.ok ? r.points : 0), [r]);
-  if (r.ok)
-    return (
-      <div className={`${s.reveal} ${s[r.tier]}`}>
-        <Gauge tier={r.tier} lang={lang} />
-        <div className={s.info}>
-          <div className={s.points}>
-            +<RollingNumber value={r.points} />
-          </div>
-          <div className={s.tier}>{t.tiers[r.tier]}</div>
-          <div className={s.answer}>{r.display}</div>
-          {r.top && r.top !== r.display && (
-            <div className={s.most}>
-              {t.most}: <strong>{r.top}</strong>
-            </div>
-          )}
-        </div>
-      </div>
-    );
+  const played = useRef(false);
+  if (!played.current) {
+    played.current = true;
+    if (typeof window !== "undefined") setTimeout(() => beep(r.ok ? r.points : 0), 0);
+  }
   return (
-    <div className={`${s.reveal} ${s.miss}`}>
-      <div className={s.info}>
-      <div className={s.points}>0</div>
-      <div className={s.tier}>{t.reasons[r.reason]}</div>
-      {r.top && (
-        <div className={s.most}>
+    <div className={v.verdict}>
+      <div className={v.verdictTitle}>{r.ok ? t.tiers[r.tier] : t.nothing}</div>
+      <div className={v.verdictPoints}>+{r.ok ? r.points : 0} {t.pts}</div>
+      {r.ok && <div className={s.answer}>{r.display}</div>}
+      <div className={v.verdictLine}>{r.ok ? t.quips[r.tier] : t.nothingLine}</div>
+      {r.top && (!r.ok || r.top !== r.display) && (
+        <div className={v.verdictLine}>
           {t.most}: <strong>{r.top}</strong>
         </div>
       )}
-      {r.reason === "unlisted" &&
-        (reported ? (
-          <span className="small muted">{t.reported}</span>
-        ) : (
-          <button
-            className="btn ghost small"
-            onClick={async () => {
-              await onReport();
-              setReported(true);
-            }}
-          >
-            {t.report}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-const DEPTHS: RareTier[] = ["common", "known", "rare", "deep", "legend"];
-
-/** Depth gauge: surface at the top, the rarest finds at the bottom. The marker dives to the tier. */
-function Gauge({ tier, lang }: { tier: RareTier; lang: Lang }) {
-  const i = DEPTHS.indexOf(tier);
-  return (
-    <div className={s.gauge} aria-hidden>
-      {DEPTHS.map((d, k) => (
-        <span key={d} className={`${s.band} ${s["b" + k]} ${k === i ? s.here : ""}`} title={S[lang].tiers[d]} />
-      ))}
-      <span className={s.marker} style={{ ["--depth" as string]: i }} />
+      {!r.ok && rejected && (
+        <div style={{ marginTop: 12 }}>
+          {reported ? (
+            <span className={v.hint}>{t.reported}</span>
+          ) : (
+            <button
+              className={s.report}
+              onClick={async () => {
+                await onReport(rejected);
+                setReported(true);
+              }}
+            >
+              {t.report(rejected)}
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
 export default function RareGame({ puzzle, day, variant, lang, puzzleId, onFinish }: GameClientProps<RarePublic>) {
   const t = S[lang];
-  const [answers, setAnswers] = useState<(string | null)[]>([]);
   const [result, setResult] = useState<FinishResult | null>(null);
-  const v = variantKey(variant);
+  const lastRejected = useRef<Record<number, string>>({});
+  const vk = variantKey(variant);
+  const scene = useMemo(() => diveScene(lang), [lang]);
 
   const onAnswer = useCallback(
     async (i: number, text: string | null) => {
-      setAnswers((a) => {
-        const next = a.slice();
-        next[i] = text;
-        return next;
-      });
-      return answerRare(day, v, i, text);
+      const r = await answerRare(day, vk, i, text);
+      if (!r.ok && text) lastRejected.current[i] = text;
+      return r;
     },
-    [day, v],
+    [day, vk],
   );
 
   const onDone = useCallback(
@@ -163,27 +172,29 @@ export default function RareGame({ puzzle, day, variant, lang, puzzleId, onFinis
 
   return (
     <div className="col gap">
-      {!per && (
-        <PromptRound
-          prompts={puzzle.prompts}
-          lang={lang}
-          storeKey={`dg:rare:${puzzleId}`}
-          onAnswer={onAnswer}
-          onDone={onDone}
-          intro={
-            <div className={s.ladder}>
-              {DEPTHS.map((d, k) => (
-                <span key={d} className={`${s.rung} ${s["b" + k]}`}>
-                  <strong>{[10, 30, 60, 85, 100][k]}</strong> {t.tiers[d]}
-                </span>
-              ))}
-            </div>
-          }
-          renderReveal={(r: RareReveal, i) => (
-            <Reveal r={r} lang={lang} onReport={() => reportRare(day, v, i, answers[i] ?? "")} />
-          )}
-        />
-      )}
+      <PromptRound
+        prompts={puzzle.prompts}
+        storeKey={`dg:rare2:${puzzleId}`}
+        scene={scene}
+        copy={t.copy}
+        onAnswer={onAnswer}
+        isAccepted={(r: RareReveal) => r.ok}
+        pointsOf={(r: RareReveal) => (r.ok ? r.points : 0)}
+        rejectText={(r: RareReveal) => (r.ok ? "" : t.reject[r.reason])}
+        onDone={onDone}
+        intro={
+          <div className={s.ladder}>
+            {TIERS.map((d, k) => (
+              <span key={d} className={`${s.rung} ${s["b" + k]}`}>
+                <strong>{POINTS[k]}</strong> {t.tiers[d]}
+              </span>
+            ))}
+          </div>
+        }
+        renderReveal={(r: RareReveal, i) => (
+          <Verdict key={i} r={r} lang={lang} rejected={lastRejected.current[i] ?? null} onReport={(text) => reportRare(day, vk, i, text)} />
+        )}
+      />
       {per && (
         <div className="card table-wrap">
           <table className="table">
@@ -201,7 +212,7 @@ export default function RareGame({ puzzle, day, variant, lang, puzzleId, onFinis
                   <td title={p.text}>{i + 1}</td>
                   <td>
                     {p.display ?? <span className="muted">{p.answer ?? "—"}</span>}
-                    {p.tier && <span className={`tag ${s[p.tier]}`}>{t.tiers[p.tier as RareTier]}</span>}
+                    {p.tier && <span className={`tag ${s[p.tier]}`}>{t.tiers[p.tier]}</span>}
                   </td>
                   <td className="muted">{p.top ?? "—"}</td>
                   <td className="num">{p.points}</td>

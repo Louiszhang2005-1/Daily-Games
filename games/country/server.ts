@@ -6,6 +6,7 @@ import { rotatingPick } from "@/shared/rng";
 import { COUNTRIES } from "./countries";
 import { replay, SLOTS, type Action, type Category, type CountryPuzzle } from "./logic";
 import { SEEDS } from "./seed";
+import { countryOutline } from "./shape";
 
 export interface CountryOption {
   id: string;
@@ -14,6 +15,7 @@ export interface CountryOption {
 }
 
 export interface CountryPublic {
+  outline: string | null; // SVG path, 300x300
   free: Category;
   clues: Record<Category, string[]>;
   slots: Record<Category, number>;
@@ -42,7 +44,7 @@ export const server: GameServer<CountryPuzzle, CountryPublic, CountryPayload> = 
   },
 
   toPublic(full, v) {
-    return { free: full.free, clues: full.clues, slots: SLOTS, countries: countryOptions(v.lang) };
+    return { outline: countryOutline(full.answer), free: full.free, clues: full.clues, slots: SLOTS, countries: countryOptions(v.lang) };
   },
 
   score(full, payload) {

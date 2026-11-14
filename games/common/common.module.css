@@ -1,51 +1,30 @@
-/* Common Answers: a survey board. Rows flip in like a game-show board; your answer climbs out. */
-
-.boardWrap {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-}
-
-.score {
-  font-size: 2.6rem;
-  font-weight: 800;
-  font-stretch: 125%;
-  line-height: 1;
-  animation: climb 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.2);
-}
-
-.score span { font-size: 1rem; font-weight: 600; font-stretch: 100%; opacity: 0.8; }
-
-@keyframes climb {
-  from { transform: translateY(18px); opacity: 0; }
-  to { transform: none; opacity: 1; }
-}
+/* Common Answers: a survey board inside the sky scene (solid colours). */
 
 .board {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin: 0;
-  padding: 8px;
-  border-radius: 14px;
-  background: #1b2140;
+  gap: 5px;
+  width: min(420px, 100%);
+  margin: 10px auto 0;
+  padding: 6px;
+  border-radius: 12px;
+  background: rgba(10, 16, 40, 0.86);
   list-style: none;
+  text-align: left;
+  text-shadow: none;
 }
 
 .board li {
-  position: relative;
   display: grid;
-  grid-template-columns: 34px 1fr auto;
+  grid-template-columns: 30px 1fr auto;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
-  border-radius: 9px;
+  padding: 5px 10px;
+  border-radius: 8px;
   background: #2a3359;
   color: #fff;
-  overflow: hidden;
   font-weight: 600;
-  animation: flipIn 0.45s ease both;
+  animation: flipIn 0.4s ease both;
 }
 
 @keyframes flipIn {
@@ -56,38 +35,48 @@
 .board li.mine {
   background: #fff;
   color: #1b2140;
-  box-shadow: inset 0 -4px 0 var(--gc);
   font-weight: 800;
 }
 
 .rank {
-  z-index: 1;
   display: grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 7px;
   background: #f2c94c;
   color: #1b2140;
   font-weight: 800;
+  font-size: 0.85rem;
 }
 
-.name { z-index: 1; text-transform: capitalize; }
-.share { z-index: 1; font-weight: 800; font-variant-numeric: tabular-nums; }
+.name { text-transform: capitalize; }
+.share { font-weight: 800; font-variant-numeric: tabular-nums; }
 
-.bar {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: var(--w);
-  background: rgba(242, 201, 76, 0.18);
-  transition: width 0.6s ease;
+.report {
+  padding: 8px 14px;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
+  background: rgba(10, 16, 40, 0.6);
+  color: #fff;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
 }
 
-.board li.mine .bar { background: color-mix(in srgb, var(--gc) 22%, transparent); }
+/* Intro ladder */
+.ladder { display: flex; flex-direction: column; gap: 4px; width: 100%; }
 
-.boardWrap :global(.btn.ghost) {
-  --b-bg: #fff;
-  --b-ink: #1b2140;
-  --b-edge: rgba(0, 0, 0, 0.3);
-  box-shadow: 0 3px 0 var(--b-edge);
+.rung {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 4px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  font-weight: 600;
 }
+
+.rung strong { min-width: 2.2em; font-weight: 800; font-stretch: 115%; color: #f2c94c; }
+.rung em { margin-left: auto; font-style: normal; font-size: 0.85rem; opacity: 0.7; }

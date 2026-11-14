@@ -23,3 +23,16 @@ export async function checkWordGuess(
   if (word.length !== WORD_LENGTH || !list.allowed.has(word)) return { valid: false };
   return { valid: true, word, marks: markGuess(word, loaded.full.answer) };
 }
+
+/** How everyone did today: counts of solves in 1..6 guesses, plus misses (index 0). */
+export async function wordDistribution(day: string, variant: string): Promise<number[]> {
+  const { getStore } = await import("@/shared/store");
+  const { puzzleId } = await import("@/shared/game");
+  const rows = await getStore().select<{ raw_score: number }>("results", { puzzle_id: puzzleId("word", day, parseVariant(variant)) });
+  const out = [0, 0, 0, 0, 0, 0, 0];
+  for (const r of rows) {
+    const used = r.raw_score > 0 ? 7 - r.raw_score : 0; // raw = 7 - guesses; 0 = miss
+    out[used]++;
+  }
+  return out;
+}

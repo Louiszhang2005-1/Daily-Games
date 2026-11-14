@@ -3,33 +3,41 @@
 import { parseVariant, puzzleId as makeId } from "@/shared/game";
 import { isNonsense } from "@/shared/matcher";
 import { dayAllowed, logRejected, matchPrompt, promptCounts } from "@/shared/prompts/server";
-import { board, pointsFor, type BoardRow } from "./logic";
+import { board, rankOf, tierForRank, type BoardRow, type ClimbTier } from "./logic";
 import { server } from "./server";
 
 export interface CommonReveal {
   matched: string | null; // canonical id
+  display: string | null;
+  rank: number | null;
+  tier: ClimbTier | null;
   points: number;
   reason: "ok" | "empty" | "nonsense" | "unlisted";
-  board: BoardRow[]; // top answers
+  board: (BoardRow & { rank: number })[]; // top answers (plus yours if lower)
 }
 
 export async function answerCommon(day: string, variant: string, index: number, text: string | null): Promise<CommonReveal> {
   const v = parseVariant(variant);
-  const none: CommonReveal = { matched: null, points: 0, reason: "empty", board: [] };
+  const none: CommonReveal = { matched: null, display: null, rank: null, tier: null, points: 0, reason: "empty", board: [] };
   if (!(await dayAllowed(day))) return none;
   const loaded = await server.load(day, v);
   const p = loaded?.full.prompts[index];
   if (!p) return none;
   const { counts, total } = await promptCounts(makeId("common", day, v), index);
-  const rows = board(p.answers, counts, total);
-  const top = rows.slice(0, 6).map((r) => ({ ...r, share: Math.round(r.share) }));
+  const rows = board(p.answers, counts, total).map((r, i) => ({ ...r, rank: i + 1, share: Math.round(r.share) }));
+  const top = rows.slice(0, 5);
   if (!text) return { ...none, board: top };
-  if (isNonsense(text)) return { matched: null, points: 0, reason: "nonsense", board: top };
+  if (isNonsense(text)) return { ...none, reason: "nonsense", board: top };
   const id = matchPrompt(p, text);
-  if (!id) return { matched: null, points: 0, reason: "unlisted", board: top };
-  const mine = rows.find((r) => r.id === id);
-  const shown = top.some((r) => r.id === id) || !mine ? top : [...top, { ...mine, share: Math.round(mine.share) }];
-  return { matched: id, points: pointsFor(rows, id), reason: "ok", board: shown };
+  if (!id) {
+    // Every turned-away answer is logged for the nightly review.
+    await logRejected("common", v.lang, makeId("common", day, v), index, p, text.slice(0, 80));
+    return { ...none, reason: "unlisted", board: top };
+  }
+  const rank = rankOf(rows, id)!;
+  const mine = rows[rank - 1];
+  const { tier, points } = tierForRank(rank);
+  return { matched: id, display: mine.display, rank, tier, points, reason: "ok", board: rank <= 5 ? top : [...top, mine] };
 }
 
 export async function reportCommon(day: string, variant: string, index: number, text: string): Promise<void> {

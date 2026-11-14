@@ -24,12 +24,14 @@ export function ResultPanel({
   day,
   shareBody,
   extra,
+  children,
 }: {
   meta: GameMeta;
   result: FinishResult;
   day: string;
   shareBody: string;
   extra?: React.ReactNode;
+  children?: React.ReactNode;
 }) {
   const { lang, t } = useLang();
   const [copied, setCopied] = useState(false);
@@ -98,6 +100,7 @@ export function ResultPanel({
           )}
         </>
       )}
+      {children}
       {shareBody && <pre className="share-preview">{shareBody}</pre>}
       <div className="row gap wrap">
         <button className="btn primary" onClick={share}>

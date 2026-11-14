@@ -22,7 +22,10 @@ const S = {
     unknown: "Not a country we know. That didn't count.",
     repeat: "Already guessed.",
     score: "If you guess now",
-    rules: "Each turn: guess, or reveal one more clue (−10). Wrong guess: −15.",
+    rules: "Each clue costs 10 points. Each wrong guess costs 15.",
+    hintsTitle: "Clues",
+    shape: "Outline of the mystery country",
+    noShape: "No outline for this one. Use the clues.",
     lastGuess: "All clues are out. One last guess!",
     away: "away",
     solved: "Correct!",
@@ -40,7 +43,10 @@ const S = {
     unknown: "Pays inconnu. Ça ne compte pas.",
     repeat: "Déjà proposé.",
     score: "Si tu devines maintenant",
-    rules: "À chaque tour : devine, ou révèle un indice de plus (−10). Mauvaise réponse : −15.",
+    rules: "Chaque indice coûte 10 points. Chaque mauvaise réponse coûte 15.",
+    hintsTitle: "Indices",
+    shape: "Contour du pays mystère",
+    noShape: "Pas de contour pour celui-ci. Utilise les indices.",
     lastGuess: "Tous les indices sont sortis. Dernière chance !",
     away: "",
     solved: "Bravo !",
@@ -156,24 +162,71 @@ export default function CountryGame({ puzzle, day, variant, lang, puzzleId, onFi
 
   return (
     <div className={s.wrap}>
-      <p className="muted small" style={{ margin: 0 }}>
-        {t.rules}
-      </p>
+      <div className={s.top}>
+        <div className={s.outline}>
+          {puzzle.outline ? (
+            <svg viewBox="0 0 300 300" role="img" aria-label={t.shape}>
+              <path d={puzzle.outline} />
+            </svg>
+          ) : (
+            <span className="muted small">{t.noShape}</span>
+          )}
+        </div>
+        <div className={s.side}>
+          <div className={s.scoreLine}>
+            <span className="muted">{over ? "" : t.score}</span>
+            {!over && <strong className="mono">{potential}</strong>}
+          </div>
+          {!over && (
+            <>
+              <AnswerInput index={index} onSubmit={guess} placeholder={t.placeholder} submitLabel={t.guess} disabled={busy} autoFocus />
+              {toast && <p className="error small" style={{ margin: 0 }}>{toast}</p>}
+              {allOut && <p className={s.warn}>{t.lastGuess}</p>}
+            </>
+          )}
+          <ol className={s.guesses}>
+            {Array.from({ length: 6 }, (_, k) => {
+              const g = guesses[k];
+              if (!g) return <li key={k} className={s.emptyRow} aria-hidden />;
+              return (
+                <li key={g.id} className={g.fb.correct ? s.hit : ""}>
+                  <span className={s.gname}>{g.name}</span>
+                  {g.fb.correct ? (
+                    <span className={s.pct}>100%</span>
+                  ) : (
+                    <>
+                      <span className={s.dist}>{g.fb.distanceKm.toLocaleString(lang)} km</span>
+                      <span className={s.arrow} aria-hidden>
+                        {arrow(g.fb.bearing)}
+                      </span>
+                      <span className={s.pct}>{g.fb.proximity}%</span>
+                    </>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+          {over && <p className={s.end}>{solved ? t.solved : t.failed}</p>}
+        </div>
+      </div>
 
-      <ol className={s.clues}>
-        {revealedClues.map((c, i) => (
-          <li key={i} className={`${s.clue} ${c.isNew ? s.new : ""}`} data-cat={c.cat}>
-            <span className={s.cat}>
-              {t.cats[c.cat]}
-              {i === 0 && <span className="tag">{t.free}</span>}
-            </span>
-            {c.text}
-          </li>
-        ))}
-      </ol>
-
-      {!over && (
-        <>
+      <section className={s.hints}>
+        <div className={s.hintsHead}>
+          <h3>{t.hintsTitle}</h3>
+          <span className="muted small">{t.rules}</span>
+        </div>
+        <ol className={s.clues}>
+          {revealedClues.map((c, i) => (
+            <li key={i} className={`${s.clue} ${c.isNew ? s.new : ""}`} data-cat={c.cat}>
+              <span className={s.cat}>
+                {t.cats[c.cat]}
+                {i === 0 && <span className="tag">{t.free}</span>}
+              </span>
+              {c.text}
+            </li>
+          ))}
+        </ol>
+        {!over && (
           <div className={s.revealRow}>
             {CATEGORIES.map((cat) => {
               const left = puzzle.slots[cat] - (st?.revealed[cat] ?? 0);
@@ -185,41 +238,8 @@ export default function CountryGame({ puzzle, day, variant, lang, puzzleId, onFi
               );
             })}
           </div>
-          {allOut && <p className={s.warn}>{t.lastGuess}</p>}
-          <div className={s.scoreLine}>
-            <span className="muted">{t.score}</span>
-            <strong className="mono">{potential}</strong>
-          </div>
-          <AnswerInput index={index} onSubmit={guess} placeholder={t.placeholder} submitLabel={t.guess} disabled={busy} />
-        </>
-      )}
-
-      {toast && <p className="error small">{toast}</p>}
-
-      {guesses.length > 0 && (
-        <ul className={s.guesses}>
-          {guesses.map((g) => (
-            <li key={g.id} className={g.fb.correct ? s.hit : ""}>
-              <span>{g.name}</span>
-              {g.fb.correct ? (
-                <span>✓</span>
-              ) : (
-                <>
-                  <span className={s.dist}>
-                    {g.fb.distanceKm.toLocaleString(lang)} km {t.away}
-                  </span>
-                  <span className={s.arrow} aria-hidden>
-                    {arrow(g.fb.bearing)}
-                  </span>
-                  <span className={s.near} style={{ ["--p" as string]: `${g.fb.proximity}%` }} aria-hidden />
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {over && <p className={s.end}>{solved ? t.solved : t.failed}</p>}
+        )}
+      </section>
     </div>
   );
 }

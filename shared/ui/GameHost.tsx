@@ -27,7 +27,7 @@ export function GameHost({
   const { lang, t } = useLang();
   const [result, setResult] = useState<FinishResult | null>(existing);
   const [error, setError] = useState<string | null>(null);
-  const { Component, share } = CLIENTS[game];
+  const { Component, share, ResultBody } = CLIENTS[game];
   const meta = METAS[game];
 
   const onFinish = useCallback(
@@ -73,7 +73,9 @@ export function GameHost({
           day={day}
           shareBody={share(result.details, lang)}
           extra={<ResultExtras game={game} day={day} result={result} />}
-        />
+        >
+          {ResultBody && <ResultBody day={day} variant={variant} result={result} lang={lang} />}
+        </ResultPanel>
       )}
     </div>
   );

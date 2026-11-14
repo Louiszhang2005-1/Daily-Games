@@ -24,7 +24,11 @@ export async function answerRare(day: string, variant: string, index: number, te
   if (isNonsense(text)) return { ok: false, reason: "nonsense", top };
   const id = matchPrompt(p, text);
   const ans = id ? p.answers.find((a) => a.id === id) : undefined;
-  if (!ans) return { ok: false, reason: "unlisted", top };
+  if (!ans) {
+    // Every turned-away answer is logged for the nightly review.
+    await logRejected("rare", v.lang, makeId("rare", day, v), index, p, text.slice(0, 80));
+    return { ok: false, reason: "unlisted", top };
+  }
   const tier = tierFor(ans, counts, total);
   return { ok: true, display: ans.aliases[0], tier, points: TIER_POINTS[tier], top };
 }
