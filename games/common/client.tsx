@@ -15,6 +15,7 @@ const S = {
     pts: "pts",
     you: "You",
     top: "Top answer",
+    how: "You score the share of players who gave the same answer. Think like everyone else.",
   },
   fr: {
     reasons: { ok: "", empty: "Pas de réponse", nonsense: "Ça ne ressemble pas à une réponse", unlisted: "Personne au tableau n'a dit ça" },
@@ -23,6 +24,7 @@ const S = {
     pts: "pts",
     you: "Toi",
     top: "Réponse n° 1",
+    how: "Tu marques le pourcentage de joueurs qui ont donné la même réponse. Pense comme tout le monde.",
   },
 } satisfies Record<Lang, unknown>;
 
@@ -32,9 +34,9 @@ function Board({ r, lang, onReport }: { r: CommonReveal; lang: Lang; onReport: (
   return (
     <div className={s.boardWrap}>
       <div className={s.score}>
-        {r.points > 0 ? `+${r.points}` : "0"} <span className="small muted">{t.pts}</span>
+        {r.points > 0 ? `+${r.points}` : "0"} <span>{t.pts}</span>
       </div>
-      {r.reason !== "ok" && <p className="muted small" style={{ margin: 0 }}>{t.reasons[r.reason]}</p>}
+      {r.reason !== "ok" && <p style={{ margin: 0, fontWeight: 700 }}>{t.reasons[r.reason]}</p>}
       <ol className={s.board}>
         {r.board.map((row, i) => (
           <li key={row.id} className={row.id === r.matched ? s.mine : ""} style={{ animationDelay: `${i * 120}ms` }}>
@@ -100,6 +102,7 @@ export default function CommonGame({ puzzle, day, variant, lang, puzzleId, onFin
           storeKey={`dg:common:${puzzleId}`}
           onAnswer={onAnswer}
           onDone={onDone}
+          intro={<p style={{ margin: 0, opacity: 0.9 }}>{t.how}</p>}
           renderReveal={(r: CommonReveal, i) => <Board r={r} lang={lang} onReport={() => reportCommon(day, v, i, answers[i] ?? "")} />}
         />
       )}

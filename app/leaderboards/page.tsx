@@ -43,7 +43,7 @@ export default async function Leaderboards({ searchParams }: { searchParams: Pro
             <th>{t.player}</th>
             {ORDERED_METAS.map((m) => (
               <th key={m.id} className="num" title={m.name[lang]}>
-                <span style={{ color: m.color }}>{m.icon}</span>
+                <span className="gdot" data-game={m.id}>{m.name.en[0]}</span>
               </th>
             ))}
             <th className="num">{t.total}</th>

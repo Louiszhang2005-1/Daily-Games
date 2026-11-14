@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { FinishResult, GameId, Lang } from "../game";
 import type { RareTier } from "../prompts/types";
@@ -8,8 +9,8 @@ import { useLang } from "./lang";
 import { localStreak } from "./local-streak";
 
 const S = {
-  en: { card: "Story card", rareCard: "Rare card", challenge: "1v1 link" },
-  fr: { card: "Carte story", rareCard: "Carte rare", challenge: "Lien 1 contre 1" },
+  en: { card: "Story image", rareCard: "Rare find image", challenge: "Challenge a friend" },
+  fr: { card: "Image story", rareCard: "Image de la trouvaille", challenge: "Défier un ami" },
 } satisfies Record<Lang, Record<string, string>>;
 
 export function cardUrl(params: Record<string, string | number | null | undefined>): string {
@@ -23,7 +24,9 @@ export function ResultExtras({ game, day, result }: { game: GameId; day: string;
   const { lang } = useLang();
   const t = S[lang];
   const summary = (result.details.summary as Record<Lang, string> | undefined)?.[lang] ?? String(result.raw);
-  const streak = typeof window !== "undefined" ? localStreak(todayET()).current : 0;
+  // Read after mount so server and client render the same link first.
+  const [streak, setStreak] = useState(0);
+  useEffect(() => setStreak(localStreak(todayET()).current), []);
   const base = { game, score: summary, pct: result.percentile !== null ? Math.round(result.percentile) : null, streak, day, lang };
 
   // A top Rare Answers result gets its own card.

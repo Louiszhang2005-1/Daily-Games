@@ -54,7 +54,7 @@ export function GameHost({
   );
 
   return (
-    <div className="game-host" style={{ ["--accent" as string]: meta.color }}>
+    <div className="game-host">
       {!existing && (
         <Component
           puzzle={puzzle as never}

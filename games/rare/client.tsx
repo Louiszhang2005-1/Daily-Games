@@ -74,24 +74,28 @@ function Reveal({ r, lang, onReport }: { r: RareReveal; lang: Lang; onReport: ()
   if (r.ok)
     return (
       <div className={`${s.reveal} ${s[r.tier]}`}>
-        <div className={s.points}>
-          +<RollingNumber value={r.points} />
-        </div>
-        <div className={s.tier}>{t.tiers[r.tier]}</div>
-        <div className={s.answer}>{r.display}</div>
-        {r.top && r.top !== r.display && (
-          <div className="small muted">
-            {t.most}: <strong>{r.top}</strong>
+        <Gauge tier={r.tier} lang={lang} />
+        <div className={s.info}>
+          <div className={s.points}>
+            +<RollingNumber value={r.points} />
           </div>
-        )}
+          <div className={s.tier}>{t.tiers[r.tier]}</div>
+          <div className={s.answer}>{r.display}</div>
+          {r.top && r.top !== r.display && (
+            <div className={s.most}>
+              {t.most}: <strong>{r.top}</strong>
+            </div>
+          )}
+        </div>
       </div>
     );
   return (
     <div className={`${s.reveal} ${s.miss}`}>
+      <div className={s.info}>
       <div className={s.points}>0</div>
       <div className={s.tier}>{t.reasons[r.reason]}</div>
       {r.top && (
-        <div className="small muted">
+        <div className={s.most}>
           {t.most}: <strong>{r.top}</strong>
         </div>
       )}
@@ -109,6 +113,22 @@ function Reveal({ r, lang, onReport }: { r: RareReveal; lang: Lang; onReport: ()
             {t.report}
           </button>
         ))}
+      </div>
+    </div>
+  );
+}
+
+const DEPTHS: RareTier[] = ["common", "known", "rare", "deep", "legend"];
+
+/** Depth gauge: surface at the top, the rarest finds at the bottom. The marker dives to the tier. */
+function Gauge({ tier, lang }: { tier: RareTier; lang: Lang }) {
+  const i = DEPTHS.indexOf(tier);
+  return (
+    <div className={s.gauge} aria-hidden>
+      {DEPTHS.map((d, k) => (
+        <span key={d} className={`${s.band} ${s["b" + k]} ${k === i ? s.here : ""}`} title={S[lang].tiers[d]} />
+      ))}
+      <span className={s.marker} style={{ ["--depth" as string]: i }} />
     </div>
   );
 }
@@ -150,6 +170,15 @@ export default function RareGame({ puzzle, day, variant, lang, puzzleId, onFinis
           storeKey={`dg:rare:${puzzleId}`}
           onAnswer={onAnswer}
           onDone={onDone}
+          intro={
+            <div className={s.ladder}>
+              {DEPTHS.map((d, k) => (
+                <span key={d} className={`${s.rung} ${s["b" + k]}`}>
+                  <strong>{[10, 30, 60, 85, 100][k]}</strong> {t.tiers[d]}
+                </span>
+              ))}
+            </div>
+          }
           renderReveal={(r: RareReveal, i) => (
             <Reveal r={r} lang={lang} onReport={() => reportRare(day, v, i, answers[i] ?? "")} />
           )}

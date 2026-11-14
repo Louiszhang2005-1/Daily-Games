@@ -178,15 +178,15 @@ export default function CountryGame({ puzzle, day, variant, lang, puzzleId, onFi
             {CATEGORIES.map((cat) => {
               const left = puzzle.slots[cat] - (st?.revealed[cat] ?? 0);
               return (
-                <button key={cat} className={`btn ghost ${s.revealBtn}`} disabled={left <= 0} onClick={() => reveal(cat)} data-cat={cat}>
+                <button key={cat} className={s.revealBtn} disabled={left <= 0} onClick={() => reveal(cat)} data-cat={cat}>
                   <strong>{t.cats[cat]}</strong>
-                  <span className="small muted">{left > 0 ? `${t.cost} · ${left} ${t.left}` : t.none}</span>
+                  <span className="small muted">{left > 0 ? `${t.cost}, ${left} ${t.left}` : t.none}</span>
                 </button>
               );
             })}
           </div>
           {allOut && <p className={s.warn}>{t.lastGuess}</p>}
-          <div className="row spread small">
+          <div className={s.scoreLine}>
             <span className="muted">{t.score}</span>
             <strong className="mono">{potential}</strong>
           </div>
@@ -204,9 +204,15 @@ export default function CountryGame({ puzzle, day, variant, lang, puzzleId, onFi
               {g.fb.correct ? (
                 <span>✓</span>
               ) : (
-                <span className="mono">
-                  {g.fb.distanceKm.toLocaleString(lang)} km {t.away} {arrow(g.fb.bearing)} {g.fb.proximity}%
-                </span>
+                <>
+                  <span className={s.dist}>
+                    {g.fb.distanceKm.toLocaleString(lang)} km {t.away}
+                  </span>
+                  <span className={s.arrow} aria-hidden>
+                    {arrow(g.fb.bearing)}
+                  </span>
+                  <span className={s.near} style={{ ["--p" as string]: `${g.fb.proximity}%` }} aria-hidden />
+                </>
               )}
             </li>
           ))}

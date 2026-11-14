@@ -1,66 +1,118 @@
 .wrap {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
+  max-width: 640px;
 }
 
 .ready {
   display: flex;
   flex-direction: column;
-  gap: 12px;
   align-items: flex-start;
+  gap: 14px;
+  max-width: 640px;
+  padding: 22px;
+  border-radius: 18px;
+  background: var(--gc);
+  color: #fff;
+  box-shadow: 0 5px 0 var(--gc-edge);
+  font-size: 1.1rem;
 }
 
-.progress {
-  display: flex;
-  gap: 6px;
+.ready p { margin: 0; }
+
+.ready button {
+  --b-bg: #fff !important;
+  --b-ink: #1b2140 !important;
+  --b-edge: rgba(0, 0, 0, 0.3) !important;
 }
+
+.progress { display: flex; gap: 6px; }
 
 .dot,
 .dotNow,
 .dotDone {
   flex: 1;
-  height: 6px;
+  height: 8px;
   border-radius: 99px;
   background: var(--surface-2);
 }
 
-.dotNow { background: color-mix(in srgb, var(--accent) 45%, var(--surface-2)); }
-.dotDone { background: var(--accent); }
+.dotNow { background: color-mix(in srgb, var(--gc) 45%, var(--surface-2)); }
+.dotDone { background: var(--gc); }
 
 .prompt {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  border-top: 5px solid var(--accent);
+  gap: 14px;
+  padding: 20px;
+  border-radius: 18px;
+  background: var(--gc);
+  color: #fff;
+  box-shadow: 0 5px 0 var(--gc-edge);
 }
 
+.prompt :global(.label) { color: rgba(255, 255, 255, 0.75); }
+
 .text {
-  font-size: clamp(1.3rem, 4.5vw, 1.8rem);
   margin: 0;
+  font-size: clamp(1.5rem, 5.4vw, 2.2rem);
+  font-weight: 800;
+  font-stretch: 118%;
+  line-height: 1.1;
+}
+
+.timerRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .timerBar {
+  flex: 1;
   height: 10px;
-  border-radius: 99px;
-  background: var(--surface-2);
   overflow: hidden;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .timerBar span {
   display: block;
   height: 100%;
-  background: var(--accent);
+  background: #fff;
   transform-origin: left;
   transition: transform 0.2s linear;
 }
 
-.timerBar span.low { background: var(--bad); }
+.timerBar span.low { background: #ffd166; }
+
+.secs {
+  min-width: 2.6em;
+  font-size: 1.3rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.inputArea {
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--ink);
+}
 
 .reveal {
   display: flex;
   flex-direction: column;
-  gap: 12px;
   align-items: flex-start;
+  gap: 12px;
   animation: rise 0.3s ease;
 }
+
+.reveal > :global(.btn) {
+  --b-bg: #fff;
+  --b-ink: #1b2140;
+  --b-edge: rgba(0, 0, 0, 0.3);
+}
+
+.timeUp { margin: 0; font-weight: 700; }

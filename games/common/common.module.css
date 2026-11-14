@@ -1,3 +1,5 @@
+/* Common Answers: a survey board. Rows flip in like a game-show board; your answer climbs out. */
+
 .boardWrap {
   display: flex;
   flex-direction: column;
@@ -6,36 +8,43 @@
 }
 
 .score {
-  font-family: var(--font-display);
+  font-size: 2.6rem;
   font-weight: 800;
-  font-size: 2.2rem;
+  font-stretch: 125%;
+  line-height: 1;
   animation: climb 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.2);
 }
 
+.score span { font-size: 1rem; font-weight: 600; font-stretch: 100%; opacity: 0.8; }
+
 @keyframes climb {
-  from { transform: translateY(16px); opacity: 0; }
+  from { transform: translateY(18px); opacity: 0; }
   to { transform: none; opacity: 1; }
 }
 
 .board {
-  list-style: none;
-  margin: 0;
-  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 6px;
+  margin: 0;
+  padding: 8px;
+  border-radius: 14px;
+  background: #1b2140;
+  list-style: none;
 }
 
 .board li {
   position: relative;
   display: grid;
-  grid-template-columns: 28px 1fr auto;
+  grid-template-columns: 34px 1fr auto;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   padding: 10px 12px;
-  border-radius: 10px;
-  background: var(--surface-2);
+  border-radius: 9px;
+  background: #2a3359;
+  color: #fff;
   overflow: hidden;
+  font-weight: 600;
   animation: flipIn 0.45s ease both;
 }
 
@@ -45,31 +54,40 @@
 }
 
 .board li.mine {
-  outline: 3px solid var(--accent);
-  font-weight: 700;
+  background: #fff;
+  color: #1b2140;
+  box-shadow: inset 0 -4px 0 var(--gc);
+  font-weight: 800;
 }
 
 .rank {
-  font-family: var(--font-display);
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: #f2c94c;
+  color: #1b2140;
   font-weight: 800;
-  color: var(--accent);
-  z-index: 1;
 }
 
-.name {
-  text-transform: capitalize;
-  z-index: 1;
-}
-
-.share {
-  z-index: 1;
-  font-weight: 700;
-}
+.name { z-index: 1; text-transform: capitalize; }
+.share { z-index: 1; font-weight: 800; font-variant-numeric: tabular-nums; }
 
 .bar {
   position: absolute;
   inset: 0 auto 0 0;
   width: var(--w);
-  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  background: rgba(242, 201, 76, 0.18);
   transition: width 0.6s ease;
+}
+
+.board li.mine .bar { background: color-mix(in srgb, var(--gc) 22%, transparent); }
+
+.boardWrap :global(.btn.ghost) {
+  --b-bg: #fff;
+  --b-ink: #1b2140;
+  --b-edge: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 3px 0 var(--b-edge);
 }

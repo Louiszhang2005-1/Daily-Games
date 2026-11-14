@@ -29,46 +29,39 @@ export default async function SummaryPage({ searchParams }: { searchParams: Prom
   const total = dailyTotal(pcts);
   const provisional = items.some((i) => i.res?.provisional);
 
+  const dateLabel = new Intl.DateTimeFormat(lang === "fr" ? "fr-CA" : "en-US", { weekday: "long", month: "long", day: "numeric", timeZone: "UTC" }).format(new Date(`${day}T12:00:00Z`));
+
   return (
     <>
       <h1>{t.summary}</h1>
-      <p className="muted">{day}</p>
-      <section className="card col gap" style={{ marginBottom: 16 }}>
-        <div className="label">{t.dailyTotal}</div>
-        <div className="big">
-          {total !== null ? ordinalServer(Math.round(total), lang) : "—"}
-          {provisional && <span className="tag">{t.provisional}</span>}
+      <p className="hub-sub" style={{ marginTop: 0 }}>
+        {dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1)}
+      </p>
+
+      <section className="card col gap" style={{ marginTop: 18 }}>
+        <div className="total-hero">
+          <span className="n">{total !== null ? ordinalServer(Math.round(total), lang) : "—"}</span>
+          <span className="muted">
+            {t.dailyTotal.toLowerCase()}, {pcts.length} {t.ofFive}
+            {provisional && <span className="tag">{t.provisional}</span>}
+          </span>
         </div>
-        <div className="muted small">
-          {pcts.length} / 5 {t.gamesPlayed}
+
+        <div className="day-tiles">
+          {items.map(({ meta, row, res }) => (
+            <Link key={meta.id} href={`/play/${meta.id}`} className={`day-tile ${res ? "" : "empty"}`} data-game={meta.id}>
+              <span className="nm">
+                {meta.name[lang]}
+                {row?.level ? ` (${levelLabel(row.level, lang).toLowerCase()})` : ""}
+              </span>
+              <span className="sc">{res ? ((res.details.summary as Record<string, string> | undefined)?.[lang] ?? String(res.raw)) : t.play}</span>
+              <span className="n">{res?.percentile != null ? ordinalServer(Math.round(res.percentile), lang) : "—"}</span>
+            </Link>
+          ))}
         </div>
+
         <SummaryExtras day={day} />
       </section>
-      <div className="card table-wrap">
-        <table className="table">
-          <thead>
-            <tr>
-              <th></th>
-              <th>{t.score}</th>
-              <th className="num">{t.percentile}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map(({ meta, row, res }) => (
-              <tr key={meta.id}>
-                <td>
-                  <Link href={`/play/${meta.id}`} style={{ textDecoration: "none" }}>
-                    <span style={{ color: meta.color, fontWeight: 800 }}>{meta.icon}</span> {meta.name[lang]}
-                    {row?.level && <span className="tag">{levelLabel(row.level, lang)}</span>}
-                  </Link>
-                </td>
-                <td>{res ? ((res.details.summary as Record<string, string> | undefined)?.[lang] ?? res.raw) : <span className="muted">—</span>}</td>
-                <td className="num">{res?.percentile != null ? ordinalServer(Math.round(res.percentile), lang) : "—"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
     </>
   );
 }

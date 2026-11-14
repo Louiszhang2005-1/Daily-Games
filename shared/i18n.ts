@@ -4,7 +4,7 @@ import type { Lang } from "./game";
 
 const en = {
   siteName: "Daily Games",
-  tagline: "Five short games. One new set every midnight (Eastern).",
+  tagline: "Five short games, ranked against everyone who played today.",
   play: "Play",
   played: "Played",
   comingSoon: "Coming soon",
@@ -26,7 +26,7 @@ const en = {
   hard: "Hard",
   dailyTotal: "Daily total",
   summary: "Daily summary",
-  allDone: "All five done. See your summary",
+  allDone: "All five done. See your daily summary",
   gamesPlayed: "games played",
   signIn: "Sign in",
   signOut: "Sign out",
@@ -42,6 +42,11 @@ const en = {
   best: "Best",
   days: "days",
   day: "day",
+  ofFive: "of 5 played",
+  newSet: "New set in",
+  seeResult: "See result",
+  about: "About",
+  back: "All games",
   guestNote: "Playing as a guest. Sign in to keep streaks across devices, join clans and play yesterday's games.",
 };
 
@@ -49,7 +54,7 @@ export type Dict = typeof en;
 
 const fr: Dict = {
   siteName: "Jeux du jour",
-  tagline: "Cinq petits jeux. Une nouvelle série chaque minuit (heure de l'Est).",
+  tagline: "Cinq petits jeux, classés face à tous les joueurs du jour.",
   play: "Jouer",
   played: "Joué",
   comingSoon: "Bientôt",
@@ -87,6 +92,11 @@ const fr: Dict = {
   best: "Record",
   days: "jours",
   day: "jour",
+  ofFive: "sur 5 joués",
+  newSet: "Nouvelle série dans",
+  seeResult: "Voir le résultat",
+  about: "Environ",
+  back: "Tous les jeux",
   guestNote: "Tu joues en invité. Connecte-toi pour garder tes séries sur tous tes appareils, rejoindre des clans et jouer aux jeux d'hier.",
 };
 

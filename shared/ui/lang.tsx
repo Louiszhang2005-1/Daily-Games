@@ -24,7 +24,7 @@ export function LangSwitch() {
   const next: Lang = lang === "en" ? "fr" : "en";
   return (
     <button
-      className="btn ghost small"
+      className="btn small"
       disabled={pending}
       onClick={() =>
         start(async () => {

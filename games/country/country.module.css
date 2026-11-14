@@ -1,97 +1,149 @@
 .wrap {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
+  max-width: 640px;
 }
 
+.clue[data-cat="history"], .revealBtn[data-cat="history"] { --cat: #c2702a; }
+.clue[data-cat="geography"], .revealBtn[data-cat="geography"] { --cat: #2d6cdf; }
+.clue[data-cat="climate"], .revealBtn[data-cat="climate"] { --cat: #2f9e8f; }
+.clue[data-cat="landmarks"], .revealBtn[data-cat="landmarks"] { --cat: #8a4fd6; }
+
 .clues {
-  list-style: none;
-  margin: 0;
-  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .clue {
+  display: grid;
+  grid-template-columns: 6px 1fr;
+  gap: 14px;
+  padding: 14px 16px 14px 14px;
+  border-radius: 14px;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-left: 5px solid var(--cat, var(--accent));
-  border-radius: 12px;
-  padding: 12px 14px;
-  font-size: 1.02rem;
-  line-height: 1.4;
+  font-size: 1.08rem;
+  line-height: 1.45;
 }
 
-.clue[data-cat="history"],
-.revealBtn[data-cat="history"] { --cat: #b5651d; }
-.clue[data-cat="geography"],
-.revealBtn[data-cat="geography"] { --cat: #2b6fd6; }
-.clue[data-cat="climate"],
-.revealBtn[data-cat="climate"] { --cat: #2f9e6e; }
-.clue[data-cat="landmarks"],
-.revealBtn[data-cat="landmarks"] { --cat: #8a4fd6; }
+.clue::before {
+  content: "";
+  grid-row: span 2;
+  border-radius: 3px;
+  background: var(--cat);
+}
 
 .new { animation: rise 0.35s ease; }
 
 .cat {
-  display: block;
-  font-size: 0.72rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--cat, var(--muted));
-  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--cat);
+  font-size: 0.85rem;
+  font-weight: 700;
 }
 
 .revealRow {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
 }
 
 .revealBtn {
+  display: flex;
   flex-direction: column;
-  border-radius: 12px;
-  border-color: var(--cat);
+  align-items: flex-start;
   gap: 2px;
-  padding: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 4px 0 var(--cat);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.06s ease, box-shadow 0.06s ease;
+}
+
+.revealBtn:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 var(--cat); }
+.revealBtn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+.revealBtn strong { font-size: 1rem; }
+
+.scoreLine {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.scoreLine strong {
+  font-size: 1.6rem;
+  font-weight: 800;
+  font-stretch: 115%;
+  color: var(--gc);
 }
 
 .warn {
   margin: 0;
-  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--bad) 14%, transparent);
   color: var(--bad);
+  font-weight: 700;
 }
 
 .guesses {
-  list-style: none;
-  margin: 0;
-  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .guesses li {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: var(--surface-2);
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  overflow: hidden;
   animation: rise 0.25s ease;
+  font-weight: 600;
 }
+
+.near {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 4px;
+  background: linear-gradient(90deg, #d43d3d, #e2b33a 60%, #4e9f5d);
+  clip-path: inset(0 calc(100% - var(--p)) 0 0);
+}
+
+.dist { color: var(--muted); font-variant-numeric: tabular-nums; font-weight: 500; }
+.arrow { font-size: 1.1rem; }
 
 .guesses li.hit {
   background: var(--good);
+  border-color: transparent;
   color: #fff;
-  font-weight: 700;
+  box-shadow: inset 0 -4px 0 var(--g-word-edge);
 }
 
 .end {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.3rem;
   margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-stretch: 120%;
 }

@@ -1,14 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
-import { Bricolage_Grotesque, Inter } from "next/font/google";
+import { Archivo } from "next/font/google";
 import { getLang } from "@/shared/lang-server";
 import { dict } from "@/shared/i18n";
 import { LangProvider, LangSwitch } from "@/shared/ui/lang";
 import { HeaderNav } from "@/shared/ui/HeaderNav";
 import "./globals.css";
 
-const display = Bricolage_Grotesque({ subsets: ["latin"], variable: "--font-display", weight: ["500", "700", "800"] });
-const body = Inter({ subsets: ["latin"], variable: "--font-body" });
+const archivo = Archivo({ subsets: ["latin"], variable: "--font-archivo", axes: ["wdth"] });
 
 export const metadata: Metadata = {
   title: "Daily Games",
@@ -19,8 +18,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f5f1e8" },
-    { media: "(prefers-color-scheme: dark)", color: "#16151a" },
+    { media: "(prefers-color-scheme: light)", color: "#eef1f6" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f1324" },
   ],
 };
 
@@ -28,7 +27,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const lang = await getLang();
   const t = dict(lang);
   return (
-    <html lang={lang} className={`${display.variable} ${body.variable}`}>
+    <html lang={lang} className={archivo.variable}>
       <body>
         <LangProvider lang={lang}>
           <header className="site-header">
@@ -42,7 +41,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               </span>
               {t.siteName}
             </Link>
-            <nav className="row gap">
+            <nav>
               <HeaderNav />
               <LangSwitch />
             </nav>

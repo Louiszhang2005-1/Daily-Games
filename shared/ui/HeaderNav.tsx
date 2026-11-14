@@ -9,12 +9,12 @@ export async function HeaderNav() {
   const user = await getSessionUser();
   return (
     <>
-      <Link className="btn ghost small" href="/leaderboards">
+      <Link className="nav-link" href="/leaderboards">
         {t.leaderboards}
       </Link>
       <HeaderLinksExtra />
       {user ? (
-        <Link className="btn ghost small" href="/account" title={user.displayName}>
+        <Link className="nav-link" href="/account" title={user.displayName}>
           {user.displayName.slice(0, 14)}
         </Link>
       ) : (

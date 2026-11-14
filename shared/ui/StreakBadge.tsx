@@ -32,12 +32,16 @@ export function StreakBadge({ server }: { server?: { current: number; best: numb
   }, [server]);
   if (!s) return null;
   return (
-    <div className="row gap small">
-      <span>
-        🔥 {t.streak}: <strong>{s.current}</strong> {s.current === 1 ? t.day : t.days}
+    <div className="streak">
+      <span className="flame" aria-hidden>
+        🔥
       </span>
-      <span className="muted">
-        {t.best}: {s.best}
+      <span>
+        {s.current} {s.current === 1 ? t.day : t.days} {t.streak.toLowerCase()}
+        <span className="muted small">
+          {" "}
+          ({t.best.toLowerCase()} {s.best})
+        </span>
       </span>
     </div>
   );

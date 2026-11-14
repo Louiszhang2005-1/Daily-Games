@@ -71,7 +71,7 @@ export async function ExtraBoard({ board, search }: { board: string; search: Rec
             <th>{t.player}</th>
             {ORDERED_METAS.map((m) => (
               <th key={m.id} className="num">
-                <span style={{ color: m.color }}>{m.icon}</span>
+                <span className="gdot" data-game={m.id}>{m.name.en[0]}</span>
               </th>
             ))}
             <th className="num">{t.total}</th>

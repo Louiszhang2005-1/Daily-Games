@@ -1,61 +1,119 @@
+/* Rare Answers: a dive. The rarer the answer, the deeper (and darker) the water. */
+
 .reveal {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-  padding: 16px 18px;
-  border-radius: 14px;
+  gap: 18px;
   width: 100%;
-  background: var(--tier-bg, var(--surface-2));
-  color: var(--tier-ink, var(--ink));
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--tier-bg, rgba(255, 255, 255, 0.1));
+  color: #fff;
   animation: dive 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.2);
 }
 
 @keyframes dive {
-  0% { transform: translateY(-14px) scale(0.92); opacity: 0; }
-  60% { transform: translateY(4px) scale(1.03); opacity: 1; }
+  0% { transform: translateY(-14px) scale(0.96); opacity: 0; }
+  60% { transform: translateY(4px); opacity: 1; }
   100% { transform: none; }
 }
 
-.points {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 2.6rem;
-  line-height: 1;
+.common { --tier-bg: #6cc3e8; color: #0d2a44; }
+.known { --tier-bg: #2f8fc9; }
+.rare { --tier-bg: #1d5b9c; }
+.deep { --tier-bg: #0f2f63; }
+.legend { --tier-bg: radial-gradient(circle at 70% 30%, #33407a 0%, #080d24 70%); box-shadow: 0 0 0 2px #f2c94c, 0 0 32px -6px #f2c94c; }
+.miss { --tier-bg: rgba(255, 255, 255, 0.1); }
+
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
 }
 
-.tier {
+.points {
+  font-size: 3rem;
   font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 0.85rem;
+  font-stretch: 125%;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
+
+.legend .points { color: #f2c94c; }
+
+.tier { font-size: 1rem; font-weight: 800; }
 
 .answer {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: 600;
   text-transform: capitalize;
 }
 
-.common { --tier-bg: #d9d4ca; --tier-ink: #2a2730; }
-.known { --tier-bg: #2f9e6e; --tier-ink: #fff; }
-.rare { --tier-bg: #2b6fd6; --tier-ink: #fff; }
-.deep { --tier-bg: #8a4fd6; --tier-ink: #fff; }
-.legend { --tier-bg: linear-gradient(120deg, #f2b632, #e2557a, #8a4fd6); --tier-ink: #fff; }
-.legend.reveal { box-shadow: 0 0 0 3px #f2b63255, 0 10px 30px -10px #e2557a; }
-.miss { --tier-bg: var(--surface-2); }
+.most { font-size: 0.9rem; opacity: 0.85; }
 
-:global(.tag).common,
-:global(.tag).known,
-:global(.tag).rare,
-:global(.tag).deep,
-:global(.tag).legend {
-  background: var(--tier-bg);
-  color: var(--tier-ink);
+/* Depth gauge */
+.gauge {
+  position: relative;
+  display: grid;
+  grid-template-rows: repeat(5, 1fr);
+  flex: none;
+  width: 26px;
+  min-height: 132px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.5);
 }
 
-/* Secondary text on coloured reveal cards inherits the card's ink for contrast. */
-.reveal :global(.muted) {
-  color: inherit;
-  opacity: 0.85;
+.band { display: block; }
+.b0 { background: #9fdcf3; }
+.b1 { background: #4aa6dc; }
+.b2 { background: #2468ad; }
+.b3 { background: #12346b; }
+.b4 { background: #070b20; }
+
+.marker {
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  top: calc(var(--depth) * 20% + 10% - 3px);
+  height: 6px;
+  background: #f2c94c;
+  box-shadow: 0 0 8px #f2c94c;
+  animation: sink 0.7s cubic-bezier(0.3, 0.9, 0.3, 1);
 }
+
+@keyframes sink {
+  from { top: -6px; }
+}
+
+/* Tier tags in the results table */
+:global(.tag).common { background: #6cc3e8; color: #0d2a44; }
+:global(.tag).known { background: #2f8fc9; color: #fff; }
+:global(.tag).rare { background: #1d5b9c; color: #fff; }
+:global(.tag).deep { background: #0f2f63; color: #fff; }
+:global(.tag).legend { background: #f2c94c; color: #080d24; }
+
+.reveal :global(.btn.ghost) {
+  --b-bg: #fff;
+  --b-ink: #1b2140;
+  --b-edge: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 3px 0 var(--b-edge);
+}
+
+/* Intro ladder: the five depths and their points */
+.ladder { display: flex; flex-direction: column; gap: 4px; width: 100%; max-width: 360px; }
+
+.rung {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 7px 12px;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.rung strong { min-width: 2.2em; font-weight: 800; font-stretch: 115%; }
+.rung.b0 { color: #0d2a44; }
+.rung.b4 { box-shadow: inset 0 0 0 2px #f2c94c; }

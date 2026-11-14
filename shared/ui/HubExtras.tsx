@@ -10,12 +10,21 @@ import { getStreak } from "../streaks";
 import { StreakBadge } from "./StreakBadge";
 import { HubClanExtra } from "./HubClanExtra";
 
-// Hub banners: streak, summary link, yesterday's catch-up, guest note.
-export async function HubExtras({ doneCount }: { doneCount: number }) {
+// Hub notes. "top": streak and clan/1v1 shortcuts. "bottom": yesterday's catch-up and the guest note.
+export async function HubExtras({ part }: { part: "top" | "bottom"; doneCount?: number }) {
   const lang = await getLang();
   const t = dict(lang);
   const player = await getPlayer();
-  const streak = player.userId ? await getStreak(player.userId) : null;
+
+  if (part === "top") {
+    const streak = player.userId ? await getStreak(player.userId) : null;
+    return (
+      <div className="row gap wrap spread" style={{ marginBottom: 22 }}>
+        <StreakBadge server={streak} />
+        {player.userId && <HubClanExtra />}
+      </div>
+    );
+  }
 
   let missed: typeof ORDERED_METAS = [];
   if (player.userId) {
@@ -31,31 +40,26 @@ export async function HubExtras({ doneCount }: { doneCount: number }) {
   }
 
   return (
-    <div className="col gap" style={{ marginBottom: 16 }}>
-      <StreakBadge server={streak} />
-      {doneCount > 0 && (
-        <Link href="/summary" className="banner" style={{ margin: 0, textDecoration: "none" }}>
-          {doneCount === 5 ? `🎉 ${t.allDone} →` : `${t.summary} (${doneCount}/5) →`}
-        </Link>
-      )}
-      {player.userId && <HubClanExtra />}
+    <div className="hub-notes" style={{ marginTop: 26 }}>
       {missed.length > 0 && (
-        <div className="banner col gap" style={{ margin: 0 }}>
-          <strong>{t.catchUp}</strong>
-          <span className="muted small">{t.catchUpNote}</span>
-          <div className="row gap wrap">
+        <div className="banner col gap">
+          <div>
+            <strong>{t.catchUp}</strong>
+            <div className="muted small">{t.catchUpNote}</div>
+          </div>
+          <div className="chip-row">
             {missed.map((m) => (
-              <Link key={m.id} className="btn ghost small" href={`/play/${m.id}?day=yesterday`}>
-                <span style={{ color: m.color }}>{m.icon}</span> {m.name[lang]}
+              <Link key={m.id} className="chip" data-game={m.id} href={`/play/${m.id}?day=yesterday`}>
+                <span className="dot" />
+                {m.name[lang]}
               </Link>
             ))}
           </div>
         </div>
       )}
       {!player.userId && (
-        <p className="banner" style={{ margin: 0 }}>
-          {t.guestNote}{" "}
-          <Link href="/auth">{t.signIn} →</Link>
+        <p className="banner">
+          {t.guestNote} <Link href="/auth">{t.signIn}</Link>
         </p>
       )}
     </div>

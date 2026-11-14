@@ -9,6 +9,12 @@ import { getPlayer } from "@/shared/identity";
 import { getLang } from "@/shared/lang-server";
 import { resultsForPlayer, toFinishResult } from "@/shared/results";
 import { GameHost } from "@/shared/ui/GameHost";
+import { GameMark } from "@/shared/ui/GameMark";
+
+const LEVEL_NOTES: Record<"en" | "fr", Record<string, string>> = {
+  en: { easy: "Plain, everyday clues. Ranked up to the 80th percentile.", medium: "Trickier clues and a fuller grid. Ranked up to the top." },
+  fr: { easy: "Définitions simples. Classement jusqu'au 80e centile.", medium: "Définitions plus malicieuses, grille plus dense. Classement complet." },
+};
 
 export const dynamic = "force-dynamic";
 
@@ -31,21 +37,22 @@ export default async function PlayPage({
   const catchUp = sp.day === "yesterday" && Boolean(player.userId);
   const day = catchUp ? yesterdayET() : todayET();
   const dayQuery = catchUp ? "&day=yesterday" : "";
+  const dayLabel = new Intl.DateTimeFormat(lang === "fr" ? "fr-CA" : "en-US", { month: "long", day: "numeric", timeZone: "UTC" }).format(new Date(`${day}T12:00:00Z`));
 
   const previous = (await resultsForPlayer(player, day)).find((r) => r.game === game && r.language === lang);
 
   const header = (
-    <div className="game-title" style={{ ["--accent" as string]: meta.color }}>
-      <span className="game-card" style={{ border: 0, padding: 0 }}>
-        <span className="icon">{meta.icon}</span>
+    <div className="game-bar">
+      <span className="mark">
+        <GameMark game={game} />
       </span>
       <div>
-        <h1 style={{ margin: 0 }}>{meta.name[lang]}</h1>
-        <div className="muted small">
-          {catchUp ? t.yesterday : t.today} · {day}
-          {catchUp && ` · ${t.catchUpNote}`}
-        </div>
+        <h1>{meta.name[lang]}</h1>
+        <div className="sub">{catchUp ? `${t.yesterday}, ${dayLabel}. ${t.catchUpNote}` : `${t.today}, ${dayLabel}`}</div>
       </div>
+      <Link className="btn ghost small back" href="/">
+        {t.back}
+      </Link>
     </div>
   );
 
@@ -53,20 +60,18 @@ export default async function PlayPage({
   let level = previous?.level ?? sp.level;
   if (meta.levels && !level) {
     return (
-      <>
+      <div data-game={game}>
         {header}
-        <section className="card col gap">
-          <h3>{t.chooseLevel}</h3>
-          <div className="row gap wrap">
-            {meta.levels.map((l) => (
-              <Link key={l} className="btn primary" style={{ ["--accent" as string]: meta.color }} href={`/play/${game}?level=${l}${dayQuery}`}>
-                {levelLabel(l, lang)}
-                {meta.maxPercentile?.[l] !== undefined && meta.maxPercentile[l] < 100 ? ` (max ${meta.maxPercentile[l]})` : ""}
-              </Link>
-            ))}
-          </div>
-        </section>
-      </>
+        <h2>{t.chooseLevel}</h2>
+        <div className="level-grid">
+          {meta.levels.map((l) => (
+            <Link key={l} className="level-tile" href={`/play/${game}?level=${l}${dayQuery}`}>
+              <strong>{levelLabel(l, lang)}</strong>
+              <span>{LEVEL_NOTES[lang][l] ?? ""}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
     );
   }
   if (meta.levels && level && !meta.levels.includes(level)) level = meta.levels[0];
@@ -75,17 +80,17 @@ export default async function PlayPage({
   const loaded = await SERVERS[game].load(day, v);
   if (!loaded) {
     return (
-      <>
+      <div data-game={game}>
         {header}
         <p className="card">{t.notAvailable}</p>
-      </>
+      </div>
     );
   }
 
   const existing = previous ? await toFinishResult(previous, true) : null;
 
   return (
-    <>
+    <div data-game={game}>
       {header}
       <GameHost
         game={game}
@@ -95,6 +100,6 @@ export default async function PlayPage({
         variant={variantKey(v)}
         existing={existing}
       />
-    </>
+    </div>
   );
 }

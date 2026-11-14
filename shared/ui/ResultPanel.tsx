@@ -41,7 +41,7 @@ export function ResultPanel({
 
   async function share() {
     const site = window.location.origin;
-    const text = [`${t.siteName} · ${meta.name[lang]} · ${day}`, shareBody, pctLine, site].filter(Boolean).join("\n");
+    const text = [`${t.siteName}: ${meta.name[lang]}, ${day}`, shareBody, pctLine, site].filter(Boolean).join("\n");
     try {
       if (navigator.share && /Mobi|Android/i.test(navigator.userAgent)) {
         await navigator.share({ text });
@@ -55,25 +55,49 @@ export function ResultPanel({
     }
   }
 
+  const pct = result.percentile !== null ? Math.round(result.percentile) : null;
+  const R = RS[lang];
+
   return (
-    <section className="result card" style={{ ["--accent" as string]: meta.color }}>
-      {result.alreadyPlayed && <p className="muted small">{t.alreadyPlayed}</p>}
-      {result.isCatchUp && <p className="muted small">{t.catchUpNote}</p>}
-      <div className="result-row">
-        <div>
-          <div className="label">{t.score}</div>
-          <div className="big">{summaryOf(result, lang)}</div>
-        </div>
-        {result.percentile !== null && (
+    <section className="result" aria-live="polite">
+      {(result.alreadyPlayed || result.isCatchUp) && (
+        <p className="muted small" style={{ margin: 0 }}>
+          {result.isCatchUp ? t.catchUpNote : t.alreadyPlayed}
+        </p>
+      )}
+      <div className="result-top">
+        {pct !== null ? (
           <div>
-            <div className="label">
-              {t.percentile}
-              {result.provisional && <span className="tag">{t.provisional}</span>}
+            <div className="pct">
+              {ordinal(pct, lang)}
+              <small>{t.percentile.toLowerCase()}</small>
             </div>
-            <div className="big">{ordinal(Math.round(result.percentile), lang)}</div>
+            <div className="muted small">{R.ahead(pct)}</div>
           </div>
+        ) : (
+          <div className="pct">{summaryOf(result, lang)}</div>
         )}
+        <div className="score">
+          <span className="label">{t.score}</span>
+          <strong>{summaryOf(result, lang)}</strong>
+        </div>
       </div>
+      {pct !== null && (
+        <>
+          <div className="pct-bar" role="img" aria-label={R.ahead(pct)}>
+            <span className="fill" style={{ width: `${Math.max(3, pct)}%` }} />
+          </div>
+          <div className="pct-ends">
+            <span>0</span>
+            <span>100</span>
+          </div>
+          {result.provisional && (
+            <p className="muted small" style={{ margin: "-8px 0 0" }}>
+              {R.provisional}.
+            </p>
+          )}
+        </>
+      )}
       {shareBody && <pre className="share-preview">{shareBody}</pre>}
       <div className="row gap wrap">
         <button className="btn primary" onClick={share}>
@@ -87,3 +111,14 @@ export function ResultPanel({
     </section>
   );
 }
+
+const RS = {
+  en: {
+    ahead: (p: number) => `You did better than ${p}% of today's players.`,
+    provisional: "Early ranking, based on recent days until 30 people play",
+  },
+  fr: {
+    ahead: (p: number) => `Tu as fait mieux que ${p} % des joueurs du jour.`,
+    provisional: "Classement provisoire, basé sur les derniers jours jusqu'à 30 joueurs",
+  },
+};

@@ -57,7 +57,7 @@ export default async function ChallengeView({ params }: { params: Promise<{ toke
             {h.games.map((g) => (
               <tr key={g.game}>
                 <td>
-                  <span style={{ color: METAS[g.game].color }}>{METAS[g.game].icon}</span> {METAS[g.game].name[lang]}
+                  <span className="gdot" data-game={g.game} /> {METAS[g.game].name[lang]}
                 </td>
                 <td className="num">{g.a !== null ? Math.round(g.a) : "·"}</td>
                 <td className="num">{g.b !== null ? Math.round(g.b) : "·"}</td>

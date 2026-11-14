@@ -30,6 +30,7 @@ export function PromptRound<R>({
   onAnswer,
   renderReveal,
   onDone,
+  intro,
 }: {
   prompts: { text: string }[];
   lang: Lang;
@@ -37,6 +38,7 @@ export function PromptRound<R>({
   onAnswer: (index: number, text: string | null) => Promise<R>;
   renderReveal: (reveal: R, index: number) => React.ReactNode;
   onDone: (answers: (string | null)[]) => void;
+  intro?: React.ReactNode;
 }) {
   const t = S[lang];
   const [state, setState] = useState<Saved<R>>({ idx: 0, deadline: null, answers: [], reveals: [], started: false });
@@ -102,8 +104,9 @@ export function PromptRound<R>({
 
   if (!state.started) {
     return (
-      <div className={`card ${s.ready}`}>
+      <div className={s.ready}>
         <p>{t.ready}</p>
+        {intro}
         <button
           className="btn primary"
           onClick={() => setState((st) => ({ ...st, started: true, deadline: Date.now() + PROMPT_SECONDS * 1000 }))}
@@ -125,28 +128,30 @@ export function PromptRound<R>({
           <span key={i} className={i < state.reveals.length ? s.dotDone : i === idx ? s.dotNow : s.dot} />
         ))}
       </div>
-      <div className={`card ${s.prompt}`}>
+      <div className={s.prompt}>
         <div className="label">
           {idx + 1} {t.of} {prompts.length}
         </div>
         <h2 className={s.text}>{prompts[idx].text}</h2>
         {answering && (
           <>
-            <div className={s.timerBar}>
-              <span style={{ transform: `scaleX(${pct})` }} className={left < 6000 ? s.low : ""} />
+            <div className={s.timerRow}>
+              <div className={s.timerBar}>
+                <span style={{ transform: `scaleX(${pct})` }} className={left < 6000 ? s.low : ""} />
+              </div>
+              <span className={s.secs}>{Math.ceil(left / 1000)}s</span>
             </div>
-            <div className="row spread small">
-              <span className="muted mono">{Math.ceil(left / 1000)}s</span>
+            <div className={s.inputArea}>
+              <AnswerInput onSubmit={(v) => void submit(v)} placeholder={t.placeholder} submitLabel={t.answer} disabled={busy} autoFocus showSuggestions={false} />
             </div>
-            <AnswerInput onSubmit={(v) => void submit(v)} placeholder={t.placeholder} submitLabel={t.answer} disabled={busy} autoFocus showSuggestions={false} />
           </>
         )}
         {revealed !== undefined && (
           <div className={s.reveal}>
-            {state.answers[idx] === null && <p className="muted">{t.timeUp}</p>}
+            {state.answers[idx] === null && <p className={s.timeUp}>{t.timeUp}</p>}
             {renderReveal(revealed, idx)}
             {state.idx === idx && state.idx < prompts.length && (
-              <button className="btn primary" onClick={next}>
+              <button className="btn" onClick={next}>
                 {idx + 1 < prompts.length ? t.next : t.finish}
               </button>
             )}

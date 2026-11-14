@@ -2,17 +2,25 @@ import Link from "next/link";
 import { ORDERED_METAS } from "@/games/metas";
 import { SERVERS } from "@/games/servers";
 import { todayET } from "@/shared/day";
-import { variantKey } from "@/shared/game";
+import { variantKey, type Lang } from "@/shared/game";
 import { dict, levelLabel } from "@/shared/i18n";
 import { getPlayer } from "@/shared/identity";
 import { getLang } from "@/shared/lang-server";
 import { resultsForPlayer, toFinishResult } from "@/shared/results";
 import { difficultyFor } from "@/shared/scoring";
 import { Countdown } from "@/shared/ui/Countdown";
+import { GameMark } from "@/shared/ui/GameMark";
 import { HubExtras } from "@/shared/ui/HubExtras";
 import { ordinalServer } from "@/shared/format";
 
 export const dynamic = "force-dynamic";
+
+function longDate(day: string, lang: Lang): string {
+  const s = new Intl.DateTimeFormat(lang === "fr" ? "fr-CA" : "en-US", { weekday: "long", month: "long", day: "numeric", timeZone: "UTC" }).format(
+    new Date(`${day}T12:00:00Z`),
+  );
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
 
 export default async function Hub() {
   const lang = await getLang();
@@ -30,10 +38,7 @@ export default async function Hub() {
       const mine = results.find((r) => r.game === meta.id);
       const done = mine ? await toFinishResult(mine, true) : null;
       const diffs = await Promise.all(
-        levels.map(async (level) => ({
-          level,
-          d: await difficultyFor(meta.id, today, variantKey({ lang, ...(level ? { level } : {}) })),
-        })),
+        levels.map(async (level) => ({ level, d: await difficultyFor(meta.id, today, variantKey({ lang, ...(level ? { level } : {}) })) })),
       );
       return { meta, available, done, diffs };
     }),
@@ -44,58 +49,74 @@ export default async function Hub() {
     <>
       <div className="hub-head">
         <div>
-          <h1>{t.today}</h1>
-          <p className="muted" style={{ margin: 0 }}>
-            {t.tagline}
-          </p>
+          <h1>{longDate(today, lang)}</h1>
+          <p className="hub-sub">{t.tagline}</p>
         </div>
-        <div className="muted small">
-          {t.nextPuzzle} <Countdown />
-        </div>
+        <span className="muted small">
+          {t.newSet} <Countdown />
+        </span>
       </div>
 
-      <HubExtras doneCount={doneCount} />
+      <HubExtras part="top" />
 
       <div className="game-grid">
         {cards.map(({ meta, available, done, diffs }) => (
           <Link
             key={meta.id}
             href={available ? `/play/${meta.id}` : "#"}
-            className={`card game-card ${done ? "done" : ""}`}
-            style={{ ["--accent" as string]: meta.color }}
+            className={`game-box ${available ? "" : "soon"}`}
+            data-game={meta.id}
             aria-disabled={!available}
           >
-            {done && (
-              <span className="check">
-                ✓{" "}
-                {done.percentile !== null ? ordinalServer(Math.round(done.percentile), lang) : t.played}
-              </span>
-            )}
-            <span className="icon" aria-hidden>
-              {meta.icon}
-            </span>
-            <div>
-              <h3 style={{ margin: 0 }}>{meta.name[lang]}</h3>
-              <div className="muted small">{meta.tagline[lang]}</div>
+            <div className="art">
+              <GameMark game={meta.id} />
             </div>
-            <div className="row gap wrap small">
-              {!available ? (
-                <span className="soon">{t.comingSoon}</span>
-              ) : (
+            <div className="body">
+              <h2>{meta.name[lang]}</h2>
+              <span className="desc">{meta.tagline[lang]}</span>
+              {available &&
                 diffs.map(({ level, d }) =>
                   d ? (
                     <span key={level ?? "x"} className={`diff diff-${d.label}`}>
-                      {level ? `${levelLabel(level, lang)}: ` : ""}
-                      {levelLabel(d.label, lang)} · {d.detail}
+                      {level ? `${levelLabel(level, lang)}: ` : `${t.difficulty}: `}
+                      <b>{levelLabel(d.label, lang).toLowerCase()}</b>, {d.detail}
                     </span>
                   ) : null,
-                )
-              )}
-              <span className="muted">~{meta.minutes} {t.minutes}</span>
+                )}
+              <div className="foot">
+                {done ? (
+                  <span className="done-chip">
+                    <span className="tick">✓</span>
+                    {done.percentile !== null ? `${ordinalServer(Math.round(done.percentile), lang)} ${lang === "fr" ? "centile" : "percentile"}` : t.played}
+                  </span>
+                ) : (
+                  <span className="meta">{available ? `${t.about} ${meta.minutes} ${t.minutes}` : t.comingSoon}</span>
+                )}
+                {available && <span className={`play-pill ${done ? "quiet" : ""}`}>{done ? t.seeResult : t.play}</span>}
+              </div>
             </div>
           </Link>
         ))}
+        <Link href="/summary" className="game-box day-box">
+          <div className="art">
+            <span className="day-pips">
+              {cards.map(({ meta, done }) => (
+                <span key={meta.id} data-game={meta.id} className={done ? "on" : ""} />
+              ))}
+            </span>
+          </div>
+          <div className="body">
+            <h2>{t.summary}</h2>
+            <span className="desc">{doneCount === 5 ? t.allDone : `${doneCount} ${t.ofFive}`}</span>
+            <div className="foot">
+              <span className="meta">{t.dailyTotal}</span>
+              <span className="play-pill quiet">{t.seeResult}</span>
+            </div>
+          </div>
+        </Link>
       </div>
+
+      <HubExtras part="bottom" />
     </>
   );
 }
