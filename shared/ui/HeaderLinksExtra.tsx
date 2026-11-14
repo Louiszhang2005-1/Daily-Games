@@ -1,4 +1,12 @@
-// Clans link arrives with feature/clans.
+import Link from "next/link";
+import { dict } from "../i18n";
+import { getLang } from "../lang-server";
+
 export async function HeaderLinksExtra() {
-  return null;
+  const t = dict(await getLang());
+  return (
+    <Link className="btn ghost small" href="/clans">
+      {t.clans}
+    </Link>
+  );
 }
