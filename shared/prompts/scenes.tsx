@@ -1,30 +1,44 @@
 import type { Lang } from "../game";
-import type { SceneConfig } from "./Expedition";
+import type { Decor, SceneConfig } from "./Expedition";
+import { BALLOON, BIRD, BOAT, CLOUD, FISH, FISH_DARK, GLOWFISH, HOUSE, JELLY, PEAK, Pixel, PLANE, SUB, SUN, TREE, WEED, WHALE } from "./sprites";
 
 // Two worlds. Solid colour zones only. Facts are real and written for this game.
 
-const Sub = () => (
-  <svg viewBox="0 0 64 64" width="64" height="64" aria-hidden>
-    <rect x="30" y="8" width="6" height="12" rx="2" fill="#1b2140" />
-    <rect x="26" y="6" width="14" height="5" rx="2.5" fill="#1b2140" />
-    <ellipse cx="32" cy="36" rx="24" ry="14" fill="#f2c94c" stroke="#1b2140" strokeWidth="3" />
-    <rect x="22" y="18" width="18" height="10" rx="4" fill="#f2c94c" stroke="#1b2140" strokeWidth="3" />
-    <circle cx="24" cy="36" r="5" fill="#bfe3f5" stroke="#1b2140" strokeWidth="2.5" />
-    <circle cx="38" cy="36" r="5" fill="#bfe3f5" stroke="#1b2140" strokeWidth="2.5" />
-    <path d="M56 32l6-5v18l-6-5" fill="#1b2140" />
-    <circle cx="10" cy="20" r="2.5" fill="none" stroke="#fff" strokeWidth="1.5" opacity=".8" />
-    <circle cx="6" cy="12" r="1.8" fill="none" stroke="#fff" strokeWidth="1.5" opacity=".6" />
-  </svg>
-);
+const P = (sp: { rows: string[]; palette: Record<string, string> }, size = 4, flip = false) => <Pixel rows={sp.rows} palette={sp.palette} size={size} flip={flip} />;
 
-const Balloon = () => (
-  <svg viewBox="0 0 64 64" width="64" height="64" aria-hidden>
-    <path d="M32 4c-13 0-22 9-22 21 0 10 8 17 14 22h16c6-5 14-12 14-22C54 13 45 4 32 4z" fill="#e5533d" stroke="#1b2140" strokeWidth="3" />
-    <path d="M32 4c-6 4-8 12-8 21s3 16 4 22M32 4c6 4 8 12 8 21s-3 16-4 22" fill="none" stroke="#fff" strokeWidth="2.5" opacity=".9" />
-    <path d="M26 47l2 7M38 47l-2 7" stroke="#1b2140" strokeWidth="2.5" />
-    <rect x="25" y="53" width="14" height="9" rx="2" fill="#c98d1f" stroke="#1b2140" strokeWidth="2.5" />
-  </svg>
-);
+const DIVE_DECOR: Decor[] = [
+  { at: -150, x: "82%", node: P(SUN, 5) },
+  { at: -175, x: "22%", node: P(CLOUD, 5), drift: "float" },
+  { at: -110, x: "58%", node: P(CLOUD, 4), drift: "float" },
+  { at: -16, x: "64%", node: P(BOAT, 4) },
+  { at: 40, x: "74%", node: P(FISH, 4), drift: "swim" },
+  { at: 55, x: "80%", node: P(FISH, 3), drift: "swim" },
+  { at: 130, x: "34%", node: P(FISH, 4, true), drift: "swim" },
+  { at: 470, x: "68%", node: P(WHALE, 5), drift: "swim" },
+  { at: 850, x: "28%", node: P(FISH_DARK, 4), drift: "swim" },
+  { at: 1400, x: "72%", node: P(JELLY, 4), drift: "float" },
+  { at: 2600, x: "36%", node: P(JELLY, 3), drift: "float" },
+  { at: 3600, x: "64%", node: P(GLOWFISH, 5, true), drift: "swim" },
+  { at: 7200, x: "30%", node: P(GLOWFISH, 4), drift: "swim" },
+  { at: 10_700, x: "18%", node: P(WEED, 5) },
+  { at: 10_750, x: "24%", node: P(WEED, 4) },
+  { at: 10_700, x: "78%", node: P(WEED, 5) },
+];
+
+const CLIMB_DECOR: Decor[] = [
+  { at: -34, x: "10%", node: P(TREE, 5) },
+  { at: -30, x: "24%", node: P(TREE, 4) },
+  { at: -32, x: "76%", node: P(HOUSE, 5) },
+  { at: -34, x: "90%", node: P(TREE, 5) },
+  { at: 140, x: "70%", node: P(BIRD, 4), drift: "float" },
+  { at: 420, x: "30%", node: P(BIRD, 3, true), drift: "float" },
+  { at: 1500, x: "70%", node: P(CLOUD, 6), drift: "float" },
+  { at: 2200, x: "24%", node: P(CLOUD, 5), drift: "float" },
+  { at: 2900, x: "58%", node: P(CLOUD, 4), drift: "float" },
+  { at: 4808, x: "74%", node: P(PEAK, 6) },
+  { at: 8849, x: "30%", node: P(PEAK, 7) },
+  { at: 10_000, x: "66%", node: P(PLANE, 5), drift: "float" },
+];
 
 export function diveScene(lang: Lang): SceneConfig {
   const fr = lang === "fr";
@@ -33,7 +47,8 @@ export function diveScene(lang: Lang): SceneConfig {
     maxMeters: 10_935,
     metersPerPoint: 15.6, // a perfect 700 reaches the deepest point on Earth
     edge: { color: "#bfe3f5", label: fr ? "Surface" : "Surface" },
-    mascot: <Sub />,
+    mascot: P(SUB, 4),
+    decor: DIVE_DECOR,
     zones: [
       { from: 0, to: 200, name: fr ? "Zone ensoleillée" : "Sunlit zone", color: "#3fa7d6" },
       { from: 200, to: 1000, name: fr ? "Zone crépusculaire" : "Twilight zone", color: "#2276b5" },
@@ -70,7 +85,8 @@ export function climbScene(lang: Lang): SceneConfig {
     maxMeters: 10_500,
     metersPerPoint: 15, // a perfect 700 reaches cruising altitude
     edge: { color: "#5aa94f", label: fr ? "Sol" : "Ground" },
-    mascot: <Balloon />,
+    mascot: P(BALLOON, 5),
+    decor: CLIMB_DECOR,
     zones: [
       { from: 0, to: 1000, name: fr ? "Au-dessus des toits" : "Over the rooftops", color: "#9fd6f2" },
       { from: 1000, to: 3000, name: fr ? "Dans les nuages" : "In the clouds", color: "#7cc3ea" },

@@ -19,6 +19,15 @@ export interface Fact {
   text: string;
 }
 
+/** A sprite placed in the world. `at` is metres; a negative value is pixels above the
+ * surface (dive) or below the ground line (climb), for things like boats and trees. */
+export interface Decor {
+  at: number;
+  x: string; // horizontal position, e.g. "70%"
+  node: React.ReactNode;
+  drift?: "swim" | "float";
+}
+
 export interface SceneConfig {
   mode: "dive" | "climb";
   zones: Zone[];
@@ -27,6 +36,7 @@ export interface SceneConfig {
   metersPerPoint: number;
   edge: { color: string; label: string }; // sky above the surface, or ground below the start
   mascot: React.ReactNode;
+  decor?: Decor[];
 }
 
 const WORLD_PX = 3600; // height of the whole world
@@ -86,6 +96,15 @@ export function Expedition({
             </span>
           ))}
         </div>
+
+        {(scene.decor ?? []).map((d, i) => {
+          const top = d.at < 0 ? y(0) + (dive ? d.at : -d.at) : y(d.at);
+          return (
+            <div key={i} className={`${s.decor} ${d.drift ? s[d.drift] : ""}`} style={{ top, left: d.x, animationDelay: `${(i % 5) * -1.3}s` }}>
+              {d.node}
+            </div>
+          );
+        })}
 
         <div className={s.mascot} style={{ top: mascotY }}>
           {scene.mascot}

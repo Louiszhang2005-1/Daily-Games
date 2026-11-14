@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
-import { Archivo } from "next/font/google";
+import { Archivo, Pixelify_Sans } from "next/font/google";
 import { getLang } from "@/shared/lang-server";
 import { dict } from "@/shared/i18n";
 import { LangProvider, LangSwitch } from "@/shared/ui/lang";
@@ -8,6 +8,7 @@ import { HeaderNav } from "@/shared/ui/HeaderNav";
 import "./globals.css";
 
 const archivo = Archivo({ subsets: ["latin"], variable: "--font-archivo", axes: ["wdth"] });
+const pixel = Pixelify_Sans({ subsets: ["latin"], variable: "--font-pixel" });
 
 export const metadata: Metadata = {
   title: "Daily Games",
@@ -27,7 +28,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const lang = await getLang();
   const t = dict(lang);
   return (
-    <html lang={lang} className={archivo.variable}>
+    <html lang={lang} className={`${archivo.variable} ${pixel.variable}`}>
       <body>
         <LangProvider lang={lang}>
           <header className="site-header">

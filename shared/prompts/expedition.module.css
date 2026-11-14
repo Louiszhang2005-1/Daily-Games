@@ -26,6 +26,7 @@
 }
 
 .edgeLabel {
+  display: none;
   position: absolute;
   left: 18px;
   font-size: 0.8rem;
@@ -44,7 +45,7 @@
 
 .zoneName {
   position: absolute;
-  left: 18px;
+  right: 14px;
   font-size: 0.8rem;
   font-weight: 800;
   font-stretch: 115%;
@@ -100,7 +101,7 @@
 
 .fact {
   right: 72px;
-  max-width: 230px;
+  width: 180px;
   white-space: normal;
   text-align: right;
   font-size: 0.76rem;
@@ -328,3 +329,43 @@
 @media (prefers-reduced-motion: reduce) {
   .world, .mascot { transition: none; }
 }
+
+/* Pixel sprites placed in the world */
+.decor {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+.swim { animation: swim 9s ease-in-out infinite alternate; }
+.float { animation: drift 14s ease-in-out infinite alternate; }
+
+@keyframes swim {
+  from { transform: translate(-60%, -50%); }
+  to { transform: translate(-40%, -54%); }
+}
+
+@keyframes drift {
+  from { transform: translate(-56%, -50%); }
+  to { transform: translate(-44%, -50%); }
+}
+
+.mascot svg { width: 64px; height: auto; image-rendering: pixelated; }
+
+/* Pixel type for the scene's game text */
+.hudValue,
+.cardLabel,
+.promptText,
+.verdictTitle,
+.verdictPoints,
+.tick,
+.zoneName,
+.lead strong {
+  font-family: var(--font-pixel), var(--font-archivo), monospace;
+  font-stretch: 100%;
+  letter-spacing: 0.01em;
+}
+
+.promptText { font-weight: 600; }
+.verdictTitle { font-weight: 700; }
