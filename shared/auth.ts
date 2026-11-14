@@ -5,6 +5,7 @@ import { createServerClient } from "@supabase/ssr";
 import { todayET } from "./day";
 import { hashString } from "./rng";
 import { getStore } from "./store";
+import { recordStreak } from "./streaks";
 
 // Sign in with Google or an email magic link (Supabase Auth).
 // Without Supabase keys (local development), a dev-only sign-in by display name is used.
@@ -102,6 +103,7 @@ export async function claimGuestResults(guestId: string | null | undefined, user
   for (const r of guestRows) {
     if (mine.some((m) => m.game === r.game && m.language === r.language)) continue;
     await store.update("results", { id: r.id }, { player_key: `u:${userId}`, user_id: userId, guest_id: null });
+    await recordStreak(userId, r.game, day);
     moved++;
   }
   return moved;
