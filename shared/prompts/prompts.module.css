@@ -1,0 +1,66 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ready {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.progress {
+  display: flex;
+  gap: 6px;
+}
+
+.dot,
+.dotNow,
+.dotDone {
+  flex: 1;
+  height: 6px;
+  border-radius: 99px;
+  background: var(--surface-2);
+}
+
+.dotNow { background: color-mix(in srgb, var(--accent) 45%, var(--surface-2)); }
+.dotDone { background: var(--accent); }
+
+.prompt {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 5px solid var(--accent);
+}
+
+.text {
+  font-size: clamp(1.3rem, 4.5vw, 1.8rem);
+  margin: 0;
+}
+
+.timerBar {
+  height: 10px;
+  border-radius: 99px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.timerBar span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transform-origin: left;
+  transition: transform 0.2s linear;
+}
+
+.timerBar span.low { background: var(--bad); }
+
+.reveal {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  animation: rise 0.3s ease;
+}

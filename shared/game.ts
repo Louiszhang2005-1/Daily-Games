@@ -51,13 +51,21 @@ export interface ScoreOk {
   details: Record<string, unknown>;
 }
 
+export interface ScoreContext {
+  puzzleId: string;
+  day: string;
+  variant: Variant;
+}
+
 export interface GameServer<Full = unknown, Pub = unknown, Payload = unknown> {
   /** Returns null when no puzzle exists for that day/variant (e.g. language not built yet). */
   load(day: string, v: Variant): Promise<{ full: Full; source: PuzzleSource } | null>;
   /** Strips answers before the puzzle is sent to the browser. */
   toPublic(full: Full, v: Variant): Pub;
   /** Recomputes the raw score from what the player did. Never trusts a client score. */
-  score(full: Full, payload: Payload): ScoreOk | { error: string };
+  score(full: Full, payload: Payload, ctx: ScoreContext): ScoreOk | { error: string } | Promise<ScoreOk | { error: string }>;
+  /** Optional: runs once after a first result is saved (answer counts, rejection log). */
+  afterSave?(full: Full, payload: Payload, ctx: ScoreContext): Promise<void>;
   /** Short difficulty detail for the hub card, e.g. "avg 4.4 guesses". */
   difficultyDetail?(raws: number[], lang: Lang): string;
 }
