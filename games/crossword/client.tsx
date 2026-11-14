@@ -249,7 +249,7 @@ export default function Crossword({ puzzle, lang, puzzleId, onFinish }: GameClie
     for (const p of cells) setCell(p.r, p.c, solution[p.r][p.c]);
   }
 
-  function useHint(kind: "letter" | "word") {
+  function applyHint(kind: "letter" | "word") {
     if (finished.current) return;
     const cells = kind === "letter" ? [selRef.current] : (() => {
       const cur = currentEntry();
@@ -331,10 +331,10 @@ export default function Crossword({ puzzle, lang, puzzleId, onFinish }: GameClie
       {!solved && (
         <>
           <div className="row gap wrap">
-            <button className="btn ghost small" onClick={() => useHint("letter")}>
+            <button className="btn ghost small" onClick={() => applyHint("letter")}>
               {t.letter}
             </button>
-            <button className="btn ghost small" onClick={() => useHint("word")}>
+            <button className="btn ghost small" onClick={() => applyHint("word")}>
               {t.word}
             </button>
           </div>
