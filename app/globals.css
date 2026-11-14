@@ -3,14 +3,14 @@
    One family (Archivo); headlines use its expanded width like a board-game box. */
 
 :root {
-  --bg: #eef1f6;
+  --bg: #ffffff;
   --surface: #ffffff;
-  --surface-2: #e3e8f1;
+  --surface-2: #f1f3f7;
   --ink: #1b2140;
   --ink-2: #4a5272;
   --muted: #6b7391;
-  --line: #d3d9e6;
-  --edge: #b9c1d4; /* bottom edge of neutral tiles */
+  --line: #e3e7ee;
+  --edge: #cfd5e1; /* bottom edge of neutral tiles */
   --accent: #1b2140;
   --accent-edge: #0d1128;
 
@@ -147,23 +147,29 @@ a {
 }
 
 .logo-mark {
-  display: inline-grid;
-  grid-template-columns: repeat(5, 9px);
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: var(--ink);
+}
+
+.logo-mark {
+  grid-template-columns: repeat(2, 8px);
   gap: 3px;
+  place-content: center;
 }
 
 .logo-mark i {
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
   border-radius: 2px;
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+  background: var(--bg);
 }
 
-.logo-mark i:nth-child(1) { background: var(--g-word); }
-.logo-mark i:nth-child(2) { background: var(--g-country); }
-.logo-mark i:nth-child(3) { background: var(--g-crossword); }
-.logo-mark i:nth-child(4) { background: var(--g-rare); }
-.logo-mark i:nth-child(5) { background: var(--g-common); }
+.logo-mark i:nth-child(2) { background: #f2c94c; }
+
 
 .nav-link {
   text-decoration: none;
@@ -820,4 +826,81 @@ a.banner:hover { border-color: var(--ink-2); }
   font-weight: 800;
   font-stretch: 125%;
   line-height: 0.95;
+}
+
+
+/* ---------- Hub (gallery) ---------- */
+
+.hello { margin: 22px 0 18px; }
+.hello h1 { font-size: clamp(2rem, 5.6vw, 2.8rem); font-weight: 700; font-stretch: 100%; letter-spacing: -0.02em; margin: 0 0 6px; }
+.hello p { margin: 0; color: var(--ink-2); }
+
+.day-strip {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 26px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: var(--surface-2);
+  text-decoration: none;
+}
+
+.day-strip-pips { display: flex; gap: 4px; }
+.day-strip-pips span { width: 12px; height: 24px; border-radius: 3px; background: var(--line); }
+.day-strip-pips span.on { background: var(--gc); }
+.day-strip-text { display: flex; flex-direction: column; line-height: 1.3; }
+.day-strip-text .muted { font-size: 0.9rem; }
+.day-strip-go { margin-left: auto; font-weight: 700; font-size: 0.92rem; }
+
+.shelf-title { font-size: 1.35rem; font-weight: 700; font-stretch: 100%; margin: 0 0 14px; }
+
+.shelf {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 26px 20px;
+}
+
+.gcard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.gcard:hover .gtext strong { text-decoration: underline; text-underline-offset: 3px; }
+.gcard.soon { opacity: 0.55; pointer-events: none; }
+
+.gmeta {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.appicon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  background: var(--gc);
+  color: #fff;
+}
+
+.appicon svg { width: 30px; height: 30px; }
+.gmeta[data-game="crossword"] .appicon { color: #1b2140; }
+
+.gtext { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.gtext strong { font-size: 1.08rem; font-weight: 700; }
+.gtext > span { color: var(--muted); font-size: 0.92rem; }
+
+.gstatus { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 0.88rem; }
+.played { font-weight: 700; color: var(--good); }
+
+.playbtn {
+  padding: 6px 16px;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  font-weight: 700;
 }

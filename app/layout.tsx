@@ -19,7 +19,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#eef1f6" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#0f1324" },
   ],
 };
@@ -34,7 +34,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <header className="site-header">
             <Link href="/" className="logo">
               <span className="logo-mark" aria-hidden>
-                <i />
                 <i />
                 <i />
                 <i />

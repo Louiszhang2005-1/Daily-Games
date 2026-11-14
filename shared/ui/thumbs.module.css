@@ -1,0 +1,92 @@
+/* Hub previews. Solid fills only. */
+
+.thumb {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+}
+
+.sprite { position: absolute; image-rendering: pixelated; }
+
+/* Word: a few rows of the board */
+.word { display: grid; place-items: center; background: #f4f6fa; }
+.wordGrid { display: grid; grid-template-columns: repeat(5, 30px); gap: 5px; }
+
+.tile {
+  display: grid;
+  place-items: center;
+  height: 30px;
+  border-radius: 5px;
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.c { background: #4e9f5d; }
+.p { background: #e2b33a; }
+.a { background: #7c8396; }
+
+/* Country: a globe with the outline of a sample country */
+.country { display: grid; place-items: center; background: #dceaf9; }
+.globe { position: absolute; width: 74%; height: 118%; }
+.sea { fill: #b8d6f2; }
+.grid { fill: none; stroke: #9cc3ea; stroke-width: 3; }
+.shape { position: relative; width: 46%; height: 72%; }
+.shape path { fill: #1b2140; }
+
+.pin {
+  position: absolute;
+  top: 12%;
+  right: 22%;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 4px;
+  background: #e5533d;
+  color: #fff;
+  font-weight: 800;
+  transform: rotate(-45deg);
+}
+
+.pin b { display: inline-block; transform: rotate(45deg); }
+
+/* Crossword: a mini grid with the current word highlighted */
+.cross { display: grid; place-items: center; background: #fdf3dc; }
+
+.crossGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 22px);
+  gap: 2px;
+  padding: 2px;
+  border-radius: 6px;
+  background: #1b2140;
+}
+
+.cell,
+.black {
+  display: grid;
+  place-items: center;
+  height: 22px;
+  font-weight: 800;
+  font-size: 0.72rem;
+  color: #1b2140;
+}
+
+.cell { background: #fff; }
+.black { background: #1b2140; }
+.hl { background: #b9dcff; }
+.sel { background: #f2b33d; }
+
+/* Rare Answers: the ocean */
+.rare { background: #bfe3f5; }
+.sky { position: absolute; inset: 0 0 70% 0; background: #bfe3f5; }
+.sea1 { position: absolute; inset: 30% 0 45% 0; background: #3fa7d6; border-top: 3px solid #fff; }
+.sea2 { position: absolute; inset: 55% 0 22% 0; background: #2276b5; }
+.sea3 { position: absolute; inset: 78% 0 0 0; background: #134a86; }
+
+/* Common Answers: the sky over a village */
+.common { background: #9fd6f2; }
+.grass { position: absolute; inset: 82% 0 0 0; background: #5aa94f; border-top: 3px solid #3f8f3a; }
