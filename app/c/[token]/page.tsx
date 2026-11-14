@@ -3,11 +3,23 @@ import { notFound, redirect } from "next/navigation";
 import { METAS, ORDERED_METAS } from "@/games/metas";
 import { getSessionUser } from "@/shared/auth";
 import { acceptChallenge, getChallenge, headToHead } from "@/shared/challenges";
+import { userNames } from "@/shared/boards";
 import { todayET } from "@/shared/day";
 import { getLang } from "@/shared/lang-server";
 import { CopyButton } from "@/shared/ui/CopyButton";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: { params: Promise<{ token: string }> }) {
+  const c = await getChallenge((await params).token);
+  if (!c) return {};
+  const names = await userNames([c.creator_id]);
+  const who = names.get(c.creator_id) ?? (c.language === "fr" ? "Un ami" : "A friend");
+  const title = c.language === "fr" ? `${who} te défie` : `${who} challenged you`;
+  const sub = c.language === "fr" ? "Joue les jeux du jour et compare vos scores." : "Play today's games and compare scores head to head.";
+  const image = `/api/og?title=${encodeURIComponent(title)}&sub=${encodeURIComponent(sub)}&lang=${c.language}`;
+  return { title, description: sub, openGraph: { title, description: sub, images: [image] }, twitter: { card: "summary_large_image", images: [image] } };
+}
 
 const S = {
   en: { title: "1v1", waiting: "Send this link to a friend:", copy: "Copy link", copied: "Copied!", play: "Play", vs: "vs", expired: "This challenge was for an earlier day.", done: "Head to head", inProgress: "Still playing…", total: "Daily total", wins: "wins!", tie: "It's a tie!", them: "Waiting for your friend" },

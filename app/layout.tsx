@@ -11,8 +11,11 @@ const archivo = Archivo({ subsets: ["latin"], variable: "--font-archivo", axes: 
 const pixel = Pixelify_Sans({ subsets: ["latin"], variable: "--font-pixel" });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: "Daily Games",
   description: "Five short daily games, ranked against everyone who played today.",
+  openGraph: { type: "website", siteName: "Daily Games", images: ["/api/og"] },
+  twitter: { card: "summary_large_image", images: ["/api/og"] },
 };
 
 export const viewport: Viewport = {

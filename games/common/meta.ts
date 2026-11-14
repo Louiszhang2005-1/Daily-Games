@@ -5,6 +5,6 @@ export const meta: GameMeta = {
   name: { en: "Up & Away", fr: "Envol" },
   tagline: { en: "Say what everyone would say.", fr: "Dis ce que tout le monde dirait." },
   icon: "≋",
-  color: "#d64f6a",
+  color: "#e5533d",
   minutes: 3,
 };

@@ -41,3 +41,13 @@ export async function syncLocalStreak(local: { current: number; best: number; la
   const user = await getSessionUser();
   if (user) await importStreak(user.id, local);
 }
+
+/** After signing in with an emailed code: create the profile and keep today's guest results. */
+export async function finishEmailCodeSignIn() {
+  if (authMode() !== "supabase") return;
+  const { data } = await (await supabaseServer()).auth.getUser();
+  if (!data.user) return;
+  const lang = (await cookies()).get("lang")?.value === "fr" ? "fr" : "en";
+  await ensureUser(data.user.id, null, lang);
+  await claimGuestResults((await cookies()).get(GUEST_COOKIE)?.value, data.user.id);
+}

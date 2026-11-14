@@ -904,3 +904,82 @@ a.banner:hover { border-color: var(--ink-2); }
   background: var(--surface-2);
   font-weight: 700;
 }
+
+/* Sign-in */
+.btn.oauth { justify-content: center; gap: 10px; font-weight: 600; }
+.code-input { font-size: 1.5rem; letter-spacing: 0.4em; text-align: center; font-variant-numeric: tabular-nums; }
+
+.signin {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 400px;
+  margin: 28px auto;
+  padding: 32px 28px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: 0 12px 40px -24px rgba(27, 33, 64, 0.4);
+  text-align: center;
+}
+
+.signin h1 { font-size: 1.6rem; font-weight: 700; font-stretch: 100%; margin: 4px 0 0; }
+.signin > p { margin: 0; }
+.signin form { text-align: left; }
+
+.signin-mark {
+  display: grid;
+  grid-template-columns: repeat(2, 11px);
+  gap: 4px;
+  place-content: center;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto;
+  border-radius: 13px;
+  background: var(--ink);
+}
+
+.signin-mark i { width: 11px; height: 11px; border-radius: 3px; background: var(--bg); }
+.signin-mark i:nth-child(2) { background: #f2c94c; }
+
+.btn.oauth {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid #dadce0;
+  border-radius: 10px;
+  background: #fff;
+  color: #1f1f1f;
+  box-shadow: none;
+  font-weight: 600;
+}
+
+.btn.oauth:hover { background: #f8f9fa; }
+
+@media (prefers-color-scheme: dark) {
+  .btn.oauth { background: #131314; color: #e3e3e3; border-color: #8e918f; }
+  .btn.oauth:hover { background: #1f1f20; }
+}
+
+.or-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.or-divider::before,
+.or-divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+.signin .btn.primary { width: 100%; min-height: 48px; border-radius: 10px; }
+
+.dev-signin {
+  margin-top: 6px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  text-align: left;
+}
+
+.dev-signin summary { cursor: pointer; font-weight: 700; font-size: 0.9rem; }
+.dev-signin p { margin: 8px 0; }

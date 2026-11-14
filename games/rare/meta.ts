@@ -6,6 +6,6 @@ export const meta: GameMeta = {
   name: { en: "Deep Dive", fr: "Plongée" },
   tagline: { en: "Name what nobody else would.", fr: "Trouve ce que personne ne dirait." },
   icon: "✦",
-  color: "#8a4fd6",
+  color: "#13315c",
   minutes: 3,
 };

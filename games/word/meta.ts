@@ -5,6 +5,6 @@ export const meta: GameMeta = {
   name: { en: "Word", fr: "Mot" },
   tagline: { en: "Find the 5-letter word in 6 tries.", fr: "Trouve le mot de 5 lettres en 6 essais." },
   icon: "W",
-  color: "#2f9e6e",
+  color: "#4e9f5d",
   minutes: 3,
 };

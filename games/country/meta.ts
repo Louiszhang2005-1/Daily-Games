@@ -5,6 +5,6 @@ export const meta: GameMeta = {
   name: { en: "Country Guess", fr: "Devine le pays" },
   tagline: { en: "Pick your clues, find the country.", fr: "Choisis tes indices, trouve le pays." },
   icon: "◎",
-  color: "#2b6fd6",
+  color: "#2d6cdf",
   minutes: 3,
 };

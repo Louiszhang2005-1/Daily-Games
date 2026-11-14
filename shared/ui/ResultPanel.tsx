@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import type { FinishResult, GameMeta, Lang } from "../game";
 import { useLang } from "./lang";
+import { absolute, shareOrCopy } from "../site";
 
 export function ordinal(n: number, lang: Lang): string {
   if (lang === "fr") return n === 1 ? "1er" : `${n}e`;

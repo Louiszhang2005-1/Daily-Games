@@ -8,6 +8,16 @@ import { CLAN_S } from "../../strings";
 
 export const dynamic = "force-dynamic";
 
+export async function generateMetadata({ params }: { params: Promise<{ code: string }> }) {
+  const clan = await clanByCode((await params).code);
+  if (!clan) return {};
+  const lang = await getLang();
+  const title = lang === "fr" ? `Rejoins ${clan.name}` : `Join ${clan.name}`;
+  const sub = lang === "fr" ? "Un clan sur Jeux du jour : un classement quotidien entre amis." : "A clan on Daily Games: a daily leaderboard for your group.";
+  const image = `/api/og?title=${encodeURIComponent(title)}&sub=${encodeURIComponent(sub)}&lang=${lang}`;
+  return { title, description: sub, openGraph: { title, description: sub, images: [image] }, twitter: { card: "summary_large_image", images: [image] } };
+}
+
 export default async function JoinPage({ params }: { params: Promise<{ code: string }> }) {
   const { code } = await params;
   const clan = await clanByCode(code);

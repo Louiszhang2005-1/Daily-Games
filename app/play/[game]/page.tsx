@@ -18,6 +18,20 @@ const LEVEL_NOTES: Record<"en" | "fr", Record<string, string>> = {
 
 export const dynamic = "force-dynamic";
 
+export async function generateMetadata({ params }: { params: Promise<{ game: string }> }) {
+  const { game } = await params;
+  if (!isGameId(game)) return {};
+  const lang = await getLang();
+  const meta = METAS[game];
+  const image = `/api/og?game=${game}&lang=${lang}`;
+  return {
+    title: `${meta.name[lang]} | Daily Games`,
+    description: meta.tagline[lang],
+    openGraph: { title: meta.name[lang], description: meta.tagline[lang], images: [image] },
+    twitter: { card: "summary_large_image", images: [image] },
+  };
+}
+
 // Every game runs on its own here, no login needed: /play/<game>
 export default async function PlayPage({
   params,

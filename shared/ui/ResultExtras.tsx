@@ -19,6 +19,25 @@ export function cardUrl(params: Record<string, string | number | null | undefine
   return `/api/card?${q.toString()}`;
 }
 
+/** Shares the story image to the phone's share sheet (Instagram, Messages...), or downloads it. */
+async function shareImage(url: string, filename: string) {
+  try {
+    const blob = await (await fetch(url)).blob();
+    const file = new File([blob], filename, { type: "image/png" });
+    if (navigator.canShare?.({ files: [file] })) {
+      await navigator.share({ files: [file] });
+      return;
+    }
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  } catch {
+    window.open(url, "_blank", "noopener");
+  }
+}
+
 // Extra buttons on the results screen: 1080x1920 image card, a top Rare Answers card, a 1v1 link.
 export function ResultExtras({ game, day, result }: { game: GameId; day: string; result: FinishResult }) {
   const { lang } = useLang();
@@ -35,13 +54,17 @@ export function ResultExtras({ game, day, result }: { game: GameId; day: string;
 
   return (
     <>
-      <a className="btn ghost" href={cardUrl(base)} target="_blank" rel="noopener">
+      <button className="btn ghost" type="button" onClick={() => void shareImage(cardUrl(base), `daily-games-${game}-${day}.png`)}>
         🖼️ {t.card}
-      </a>
+      </button>
       {best?.display && (
-        <a className="btn ghost" href={cardUrl({ ...base, rare: best.display, tier: best.tier })} target="_blank" rel="noopener">
+        <button
+          className="btn ghost"
+          type="button"
+          onClick={() => void shareImage(cardUrl({ ...base, rare: best.display, tier: best.tier }), `daily-games-rare-find-${day}.png`)}
+        >
           ✦ {t.rareCard}
-        </a>
+        </button>
       )}
       {!result.isCatchUp && (
         <Link className="btn ghost" href="/challenge">
