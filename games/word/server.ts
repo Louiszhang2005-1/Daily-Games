@@ -57,7 +57,14 @@ export const server: GameServer<WordFull, WordPublic, WordPayload> = {
     const label = solved ? `${used}/${MAX_GUESSES}` : `X/${MAX_GUESSES}`;
     return {
       raw: rawScore(used, solved),
-      details: { solved, used, grid, answer: full.answer, summary: { en: label, fr: label } },
+      details: {
+        solved,
+        used,
+        grid,
+        answer: full.answer,
+        // A failed round reveals the word on the results screen (never in the share text).
+        summary: solved ? { en: label, fr: label } : { en: `${label} · ${full.answer.toUpperCase()}`, fr: `${label} · ${full.answer.toUpperCase()}` },
+      },
     };
   },
 
