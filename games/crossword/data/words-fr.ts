@@ -49,5 +49,26 @@ saule sauter sauve scene score seche seize selle semer sens serre seuil siege si
 somme songe sorte souci soupe sport stade style sucre suite super table tache taille talon tante tapis tarte
 tasse taupe temps tenue terre tete texte thym tigre tiroir titre tombe torse total touche tour train trace
 trait treve tribu trois trone tronc tuile usage usine vache vague valse vapeur veau velo vent verbe verre
-veste vider ville vingt violon virus vitre vivre voile voire voisin voler voter voyage wagon zebre
+veste vider ville vingt violon virus vitre vivre voile voire voisin voler voter voyage wagon zebre achat acide
+aider ainsi album ancre argot arome asile atome aucun avant avare azote badge baffe banal baron barre basse
+bazar beige belge berge bilan bille biere blond bluff bocal bombe bonus borne botte bouee boule bourg brave
+bride brise bulbe butte cabas cache cadet canoe canon capot carpe casse cedre celle cesse chair chale chaos
+chere chute cible cidre citer clown cobra colis colon comte copie coque corne cosse crane creux crier crime
+croix cruel cuvee cygne dague dalle dater delai demon dense depot derby digne diner disco divan dorer doser
+douce duvet ecart echec ecrou egout email encre enfer engin epais epave etang etuve evier exces exode fauve
+fente fibre filet finir firme flair fleau flore flute fonce fonds forge fosse fouet foyer frais franc frein
+frise front fugue fumer furie fusee fusil gaine galet gamin garer gazon gelee geler genie genre gerbe gifle
+givre golfe gosse grade greve guepe hache haine halle hamac harpe heros hibou honte houle hymne icone ideal
+idiot igloo jaser jeton jouet joker jurer juron kayak koala lache lange laque larve latin lecon lever liane
+liege lieue lilas limer lisse local logis loyal loyer luire lutte macon major malin malle manie maree marin
+match metal meteo meute mille mimer miner moins moite molle momie moral morse motte nacre nappe natal navet
+neant niche noter nouer noyau noyer oasis ombre omega opale orner outre palme panda panne panse parmi parti
+patio payer pente peril perte peser pilon pince pinte pique pivot pizza plaie plomb poids poing polar poser
+pouce prise proie prose punir puree quota rabot radar rafle raide rance rater ravin rayer recul refus renne
+repos rever revue rhume rimer rival robot roman ronce royal ruban rugir ruine rural sabre sacre saint salir
+samba sapin satin sauge sauna scout secte selon senat serie serum silex sobre socle solde sonde sotte soude
+sourd stage stock store stylo sueur sushi tabac talus tango taper tarif taxer teint tempe tenir tenor tente
+terme theme tibia tiede tirer tissu titan toile tonne toque totem toast trame trier tripe truie tueur tulle
+tuyau union unite urine utile valet vanne vaste veine venin venir vente verge verso verte vexer vigne villa
+viser vital vodka volet vouer voyou yacht zeste
 `.trim().split(/\s+/).filter((w) => w.length === 5);
