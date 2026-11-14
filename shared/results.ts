@@ -70,7 +70,8 @@ export async function submitResult(input: SubmitInput, player: Player): Promise<
   });
   if (existing[0]) return toFinishResult(existing[0], true);
 
-  const scored = server.score(loaded.full, input.payload);
+  const ctx = { puzzleId: id, day: input.day, variant: v };
+  const scored = await server.score(loaded.full, input.payload, ctx);
   if ("error" in scored) return scored;
 
   const row: ResultRow = {
@@ -95,6 +96,13 @@ export async function submitResult(input: SubmitInput, player: Player): Promise<
   if (!inserted) {
     const again = await store.select<ResultRow>("results", { puzzle_id: id, player_key: player.key });
     if (again[0]) return toFinishResult(again[0], true);
+  }
+  if (inserted && server.afterSave) {
+    try {
+      await server.afterSave(loaded.full, input.payload, ctx);
+    } catch (err) {
+      console.error("afterSave", err);
+    }
   }
   await afterResult(player, row);
   return toFinishResult(row, false);
