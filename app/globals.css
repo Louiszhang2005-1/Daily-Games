@@ -351,3 +351,9 @@ a {
 
 .suggestions button:hover,
 .suggestions button.active { background: var(--surface-2); }
+
+.site-header nav { flex-wrap: wrap; justify-content: flex-end; }
+@media (max-width: 520px) {
+  .site-header { flex-wrap: wrap; }
+  .logo { font-size: 1.05rem; }
+}
